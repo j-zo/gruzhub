@@ -1,0 +1,31 @@
+.tab {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #2563eb;
+  padding: 5px;
+  cursor: pointer;
+  user-select: none;
+  height: 36px;
+  align-items: center;
+}
+
+.tab:hover {
+  background-color: #2563eb10;
+}
+
+.tabSelected {
+  background-color: #2563eb !important;
+  color: #fff !important;
+}
+
+.tabLeft {
+  border-right: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.tabRight {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}

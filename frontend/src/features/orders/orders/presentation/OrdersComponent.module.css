@@ -1,0 +1,4 @@
+.desktopChatHeight {
+  height: calc(100dvh - 80px);
+  overflow-y: auto;
+}

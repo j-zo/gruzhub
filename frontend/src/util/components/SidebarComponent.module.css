@@ -1,0 +1,28 @@
+.sidebar {
+  background-color: white;
+  width: 1100px;
+  max-width: 100%;
+  position: fixed;
+  z-index: 10;
+  right: -500px;
+  top: 0px;
+  transition: 0.3s;
+  overflow-y: auto;
+  min-height: 100dvh;
+  max-height: 100dvh;
+}
+
+.sidebarOpen {
+  right: 0px !important;
+}
+
+.sidebar {
+  font-size: 14px;
+}
+
+@media (max-width: 1280px) {
+  .sidebar {
+    width: 100%;
+    overflow-y: auto;
+  }
+}

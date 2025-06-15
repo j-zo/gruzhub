@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- We do not use JavaDoc in the most of the classes -->
+    <suppress checks="MissingJavadocType" files="."/>
+    <suppress checks="MissingJavadocMethod" files="."/>
+    <!-- We use many emojis -->
+    <suppress checks="AvoidEscapedUnicodeCharacters" files="."/>
+    <suppress checks="LineLength" files="."/>
+    <suppress checks="OperatorWrap" files="."/>
+    <suppress checks="VariableDeclarationUsageDistance" files="."/>
+</suppressions>

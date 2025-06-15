@@ -1,0 +1,18 @@
+FROM python:3.11
+
+EXPOSE 4000
+
+WORKDIR /backend
+COPY . /backend
+WORKDIR /backend
+
+# for the case if suddenly deployed venv
+RUN rm -rf venv
+RUN rm -rf .venv
+
+RUN pip install pdm
+RUN pdm sync
+
+RUN pdm run alembic upgrade head
+
+CMD ["pdm", "run", "gunicorn", "src.main_app:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:4000"]

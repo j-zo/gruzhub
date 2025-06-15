@@ -1,0 +1,50 @@
+.textarea {
+  font-size: 14px;
+}
+
+.textarea:focus {
+  outline: none !important;
+}
+
+.messages::-webkit-scrollbar,
+.textarea::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+.messages::-webkit-scrollbar-track,
+.textarea::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+
+/* Handle */
+.messages::-webkit-scrollbar-thumb,
+.textarea::-webkit-scrollbar-thumb {
+  background: #88888870;
+}
+
+/* Handle on hover */
+.messages::-webkit-scrollbar-thumb:hover,
+.textarea::-webkit-scrollbar-thumb:hover {
+  background: #88888870;
+}
+
+.heightFull {
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
+}
+
+.heightSmall {
+  min-height: calc(100dvh - 80px);
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+}
+
+@media only screen and (max-width: 1280px) {
+  .heightSmall {
+    min-height: 100dvh;
+    max-height: 100dvh;
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  height: auto !important;
+  font-family: "Inter" !important;
+}
+
+.form-control {
+  max-width: 100%;
+  height: 36px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.form-control:focus {
+  outline: none !important;
+}
+
+.form-control option {
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+table {
+  border: 1px solid gainsboro;
+  width: 100%;
+  border-spacing: 0px;
+  border-radius: 10px !important;
+}
+
+thead {
+  font-size: 16px;
+}
+
+th,
+td {
+  border-top: 1px solid gainsboro;
+  border-right: 1px solid gainsboro;
+  padding: 3px 10px 3px 10px;
+  font-size: 14px;
+  margin: 0px;
+  word-break: normal;
+}
+
+table tr:hover {
+  background-color: #1d4ed610;
+}
+
+tr td:last-child {
+  border-right: 0px !important;
+}
+
+.table-sm {
+  margin-top: 20px;
+}
+
+.table-sm td,
+.table-sm th {
+  font-size: 12px;
+  padding: 2px 7.5px;
+}

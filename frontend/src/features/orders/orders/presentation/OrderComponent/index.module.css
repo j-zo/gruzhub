@@ -1,0 +1,11 @@
+.mobileScrollFullHeight {
+  height: 100dvh;
+  min-height: 100dvh;
+  max-height: 100dvh;
+}
+
+@media only screen and (max-width: 1280px) {
+  .mobileScrollFullHeight {
+    overflow-y: scroll;
+  }
+}

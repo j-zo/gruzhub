@@ -1,0 +1,19 @@
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+MODE_VALUE = os.getenv("MODE")
+APPLICATION_SERVER_VALUE = os.getenv("APPLICATION_SERVER")
+TELEGRAM_BOT_TOKEN_VALUE = os.getenv("TELEGRAM_BOT_TOKEN")
+
+if APPLICATION_SERVER_VALUE is None:
+    raise Exception("APPLICATION_SERVER is None")
+if TELEGRAM_BOT_TOKEN_VALUE is None:
+    raise Exception("TELEGRAM_BOT_TOKEN is None")
+if MODE_VALUE is None:
+    raise Exception("MODE is None")
+
+APPLICATION_SERVER = APPLICATION_SERVER_VALUE
+TELEGRAM_BOT_TOKEN = TELEGRAM_BOT_TOKEN_VALUE
+MODE = MODE_VALUE
