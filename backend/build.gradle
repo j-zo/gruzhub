@@ -15,17 +15,17 @@ plugins {
 }
 
 
-sentry {
-    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
-    // This enables source context, allowing you to see your source
-    // code as part of your stack traces in Sentry.
-    includeSourceContext = true
-
-    org = "sentry"
-    projectName = "gruzhub"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN")
-    url = "https://sentry.tgtaps.com"
-}
+//sentry {
+//    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+//    // This enables source context, allowing you to see your source
+//    // code as part of your stack traces in Sentry.
+//    includeSourceContext = true
+//
+//    org = "sentry"
+//    projectName = "gruzhub"
+//    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+//    url = "https://sentry.tgtaps.com"
+//}
 
 group = 'ru.gruzhub'
 version = '0.0.1-SNAPSHOT'
@@ -79,15 +79,15 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// DB migrations settings
-
 def props = new Properties()
 file("./src/main/resources/application.properties").withInputStream { props.load(it) }
 
+
+// DB migrations settings
 flyway {
-    url = props.getProperty("spring.datasource.url")
-    user = props.getProperty("spring.datasource.username")
-    password = props.getProperty("spring.datasource.password")
+    url = System.getenv("DB_URL") ?: props.getProperty("spring.datasource.url")
+    user = System.getenv("DB_USERNAME") ?: props.getProperty("spring.datasource.username")
+    password = System.getenv("DB_PASSWORD") ?: props.getProperty("spring.datasource.password")
 }
 
 // Test coverage settings

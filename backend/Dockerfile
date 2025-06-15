@@ -1,6 +1,18 @@
 FROM openjdk:21
 
+
 RUN echo "Building backend..."
+
+
+# Declare build-time arguments
+ARG DB_URL
+ARG DB_USERNAME
+ARG DB_PASSWORD
+
+# Optional: expose them as ENV variables in the image
+ENV DB_URL=$DB_URL
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
 
 RUN microdnf install findutils
 

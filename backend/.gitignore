@@ -39,4 +39,4 @@ out/
 src/main/resources/application.properties
 src/test/resources/application-test.properties
 ./files
-.env
+*.env

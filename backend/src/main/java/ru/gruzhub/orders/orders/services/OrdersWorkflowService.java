@@ -1,10 +1,8 @@
 package ru.gruzhub.orders.orders.services;
 
 import io.sentry.Sentry;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,13 +16,16 @@ import ru.gruzhub.orders.orders.models.Order;
 import ru.gruzhub.orders.orders.models.OrderStatusChange;
 import ru.gruzhub.orders.orders.repositories.OrderRepository;
 import ru.gruzhub.orders.orders.repositories.OrderStatusChangeRepository;
-import ru.gruzhub.telegram.TelegramChatRepository;
 import ru.gruzhub.telegram.models.TelegramChat;
 import ru.gruzhub.telegram.services.TelegramSenderService;
 import ru.gruzhub.users.UsersService;
 import ru.gruzhub.users.dto.SignInUserResponseDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,9 @@ public class OrdersWorkflowService {
     private final UsersService usersService;
     private final CreateOrderCommand createOrderCommand;
     private final TelegramSenderService telegramSenderService;
-    private final TelegramChatRepository telegramChatRepository;
+
+    @Value("${app.url}")
+    private String siteMainUrl;
 
     public CreateOrderResponseDto createOrder(String authorization, CreateOrderRequestDto order) {
         return this.createOrderCommand.createOrder(authorization, order);
@@ -45,34 +48,34 @@ public class OrdersWorkflowService {
     public void startCalculationByMaster(User authorizedUser, Long orderId) {
         if (authorizedUser.getRole() != UserRole.MASTER) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                                              "Order can be taken into work only by MASTER");
+                    "Order can be taken into work only by MASTER");
         }
 
         Order order = this.orderRepository.findById(orderId).orElseThrow();
 
         if (authorizedUser.getAddress() == null ||
-            !authorizedUser.getAddress()
-                           .getRegion()
-                           .getId()
-                           .equals(order.getAddress().getRegion().getId())) {
+                !authorizedUser.getAddress()
+                        .getRegion()
+                        .getId()
+                        .equals(order.getAddress().getRegion().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                                              "Access to foreign region order");
+                    "Access to foreign region order");
         }
 
         if (order.getStatus() != OrderStatus.CREATED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                              "Заказ уже взят в работу другим автосервисом");
+                    "Заказ уже взят в работу другим автосервисом");
         }
 
         if (authorizedUser.getBalance().compareTo(TAKE_ORDER_PRICE_RUB) < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                              "На балансе недостаточно средств, чтобы взять заказ" +
-                                              " в работу");
+                    "На балансе недостаточно средств, чтобы взять заказ" +
+                            " в работу");
         }
 
         if (order.getDeclinedMastersIds().contains(authorizedUser.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                              "Текущий автосервис не может взять этот заказ");
+                    "Текущий автосервис не может взять этот заказ");
         }
 
         order.setStatus(OrderStatus.CALCULATING);
@@ -97,8 +100,8 @@ public class OrdersWorkflowService {
         Order order = this.orderRepository.findById(orderId).orElseThrow();
 
         if (order.getMaster() == null ||
-            !Objects.equals(user.getId(), order.getMaster().getId()) ||
-            order.getStatus() != OrderStatus.CALCULATING) {
+                !Objects.equals(user.getId(), order.getMaster().getId()) ||
+                order.getStatus() != OrderStatus.CALCULATING) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -116,24 +119,24 @@ public class OrdersWorkflowService {
         this.orderStatusChangeRepository.save(orderStatusChange);
 
         this.sendTelegramMessage(orderId,
-                                 user,
-                                 "Заказ #" +
-                                 orderId +
-                                 " отправлен на согласование. Подтвердите, что можно " +
-                                 "начинать работу");
+                user,
+                "Заказ #" +
+                        orderId +
+                        " отправлен на согласование. Подтвердите, что можно " +
+                        "начинать работу");
     }
 
     public void acceptByCustomer(User user, Long orderId) {
         Order order = this.orderRepository.findById(orderId).orElseThrow();
 
         if ((order.getCustomer() == null || !user.getId().equals(order.getCustomer().getId())) ||
-            order.getStatus() != OrderStatus.REVIEWING) {
+                order.getStatus() != OrderStatus.REVIEWING) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
         if (order.getMaster() == null) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                                              "Order does not have master");
+                    "Order does not have master");
         }
 
         order.setStatus(OrderStatus.ACCEPTED);
@@ -150,22 +153,22 @@ public class OrdersWorkflowService {
         this.orderStatusChangeRepository.save(orderStatusChange);
 
         this.sendTelegramMessage(orderId,
-                                 order.getMaster(),
-                                 "Заказ #" +
-                                 orderId +
-                                 " согласован заказчиком. Можете приступать к работе");
+                order.getMaster(),
+                "Заказ #" +
+                        orderId +
+                        " согласован заказчиком. Можете приступать к работе");
     }
 
     public void completeOrder(User authorizedUser, Long orderId) {
         Order order = this.orderRepository.findById(orderId).orElseThrow();
 
         if ((order.getCustomer() == null ||
-             !authorizedUser.getId().equals(order.getCustomer().getId())) &&
-            (order.getDriver() == null ||
-             !authorizedUser.getId().equals(order.getDriver().getId())) &&
-            (order.getMaster() == null ||
-             !authorizedUser.getId().equals(order.getMaster().getId())) &&
-            authorizedUser.getRole() != UserRole.ADMIN) {
+                !authorizedUser.getId().equals(order.getCustomer().getId())) &&
+                (order.getDriver() == null ||
+                        !authorizedUser.getId().equals(order.getDriver().getId())) &&
+                (order.getMaster() == null ||
+                        !authorizedUser.getId().equals(order.getMaster().getId())) &&
+                authorizedUser.getRole() != UserRole.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -184,12 +187,12 @@ public class OrdersWorkflowService {
 
         if (authorizedUser.getRole() == UserRole.MASTER) {
             this.sendTelegramMessage(orderId,
-                                     order.getCustomer(),
-                                     "Заказ #" + orderId + " завершён");
+                    order.getCustomer(),
+                    "Заказ #" + orderId + " завершён");
         }
 
         if ((authorizedUser.getRole() == UserRole.CUSTOMER ||
-             authorizedUser.getRole() == UserRole.DRIVER) && order.getMaster() != null) {
+                authorizedUser.getRole() == UserRole.DRIVER) && order.getMaster() != null) {
             this.sendTelegramMessage(orderId, order.getMaster(), "Заказ #" + orderId + " завершён");
         }
     }
@@ -216,12 +219,12 @@ public class OrdersWorkflowService {
 
             try {
                 SignInUserResponseDto authDto = this.usersService.getUserAccessNoAuth(user.getId());
-                String authLink = "https://app.gruzhub.ru?userId=" +
-                                  authDto.getId() +
-                                  "&accessToken=" +
-                                  authDto.getAccessToken() +
-                                  "&orderId=" +
-                                  orderId;
+                String authLink = siteMainUrl + "?userId=" +
+                        authDto.getId() +
+                        "&accessToken=" +
+                        authDto.getAccessToken() +
+                        "&orderId=" +
+                        orderId;
 
                 InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
                 InlineKeyboardButton button = new InlineKeyboardButton();
@@ -231,8 +234,8 @@ public class OrdersWorkflowService {
 
                 for (TelegramChat chat : user.getConnectedTelegramChats()) {
                     this.telegramSenderService.sendMessage(chat.getTelegramChatId(),
-                                                           message,
-                                                           keyboardMarkup);
+                            message,
+                            keyboardMarkup);
                 }
             } catch (Exception e) {
                 Sentry.captureException(e);
@@ -252,10 +255,10 @@ public class OrdersWorkflowService {
         }
 
         if ((order.getCustomer() != null &&
-             !authorizedUser.getId().equals(order.getCustomer().getId())) &&
-            (order.getMaster() != null &&
-             !authorizedUser.getId().equals(order.getMaster().getId())) &&
-            authorizedUser.getRole() != UserRole.ADMIN) {
+                !authorizedUser.getId().equals(order.getCustomer().getId())) &&
+                (order.getMaster() != null &&
+                        !authorizedUser.getId().equals(order.getMaster().getId())) &&
+                authorizedUser.getRole() != UserRole.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -263,7 +266,7 @@ public class OrdersWorkflowService {
         if (newStatus == OrderStatus.CREATED) {
             if (order.getMaster() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                                  "У заказа нет исполнителя");
+                        "У заказа нет исполнителя");
             }
 
             order.addDeclinedMaster(order.getMaster().getId());

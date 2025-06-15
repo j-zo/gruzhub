@@ -2,10 +2,8 @@ package ru.gruzhub.orders.orders.commands;
 
 import io.sentry.Sentry;
 import jakarta.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -24,7 +22,6 @@ import ru.gruzhub.orders.orders.models.Order;
 import ru.gruzhub.orders.orders.models.OrderStatusChange;
 import ru.gruzhub.orders.orders.repositories.OrderRepository;
 import ru.gruzhub.orders.orders.repositories.OrderStatusChangeRepository;
-import ru.gruzhub.telegram.TelegramChatRepository;
 import ru.gruzhub.telegram.models.TelegramChat;
 import ru.gruzhub.telegram.services.TelegramSenderService;
 import ru.gruzhub.users.UsersService;
@@ -32,6 +29,10 @@ import ru.gruzhub.users.dto.SignInUserResponseDto;
 import ru.gruzhub.users.dto.UpdateUserRequestDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +44,9 @@ public class CreateOrderCommand {
     private final AutoService autoService;
     private final RegionsService regionsService;
     private final TelegramSenderService telegramSenderService;
-    private final TelegramChatRepository telegramChatRepository;
+
+    @Value("${app.url}")
+    private String appUrl;
 
     public CreateOrderResponseDto createOrder(@Nullable String authorization,
                                               CreateOrderRequestDto createOrderRequest) {
@@ -53,43 +56,43 @@ public class CreateOrderCommand {
         }
 
         CreateOrderResponseDto createOrderResponseDto =
-            this.getResponseIfDuplicatedOrder(createOrderRequest);
+                this.getResponseIfDuplicatedOrder(createOrderRequest);
         if (createOrderResponseDto != null) {
             return createOrderResponseDto;
         }
 
         User driver =
-            this.getOrCreateAndValidateDriverIfPresentInOrder(createOrderRequest, authorizedUser);
+                this.getOrCreateAndValidateDriverIfPresentInOrder(createOrderRequest, authorizedUser);
         User customer = this.getCustomerIfAuthorized(authorizedUser);
         Address address = this.createAddress(createOrderRequest);
         List<Auto> autos = this.getOrCreateAutos(createOrderRequest, driver, customer);
 
         Order order = Order.builder()
-                           .guaranteeUuid(createOrderRequest.getGuaranteeUuid())
-                           .customer(customer)
-                           .driver(driver)
-                           .createdAt(System.currentTimeMillis())
-                           .updatedAt(System.currentTimeMillis())
-                           .address(address)
-                           .autos(autos)
-                           .status(OrderStatus.CREATED)
-                           .lastStatusUpdateTime(System.currentTimeMillis())
-                           .description(createOrderRequest.getDescription())
-                           .notes(createOrderRequest.getNotes())
-                           .isNeedEvacuator(createOrderRequest.isNeedEvacuator())
-                           .isNeedMobileTeam(createOrderRequest.isNeedMobileTeam())
-                           .urgency(createOrderRequest.getUrgency())
-                           .build();
+                .guaranteeUuid(createOrderRequest.getGuaranteeUuid())
+                .customer(customer)
+                .driver(driver)
+                .createdAt(System.currentTimeMillis())
+                .updatedAt(System.currentTimeMillis())
+                .address(address)
+                .autos(autos)
+                .status(OrderStatus.CREATED)
+                .lastStatusUpdateTime(System.currentTimeMillis())
+                .description(createOrderRequest.getDescription())
+                .notes(createOrderRequest.getNotes())
+                .isNeedEvacuator(createOrderRequest.isNeedEvacuator())
+                .isNeedMobileTeam(createOrderRequest.isNeedMobileTeam())
+                .urgency(createOrderRequest.getUrgency())
+                .build();
         order = this.orderRepository.save(order);
 
         OrderStatusChange orderStatusChange = OrderStatusChange.builder()
-                                                               .order(order)
-                                                               .newStatus(OrderStatus.CREATED)
-                                                               .updatedAt(System.currentTimeMillis())
-                                                               .updatedBy(authorizedUser != null ?
-                                                                          authorizedUser :
-                                                                          driver)
-                                                               .build();
+                .order(order)
+                .newStatus(OrderStatus.CREATED)
+                .updatedAt(System.currentTimeMillis())
+                .updatedBy(authorizedUser != null ?
+                        authorizedUser :
+                        driver)
+                .build();
         this.orderStatusChangeRepository.save(orderStatusChange);
 
         Order finalOrder = order;
@@ -97,8 +100,8 @@ public class CreateOrderCommand {
 
         if (driver != null && authorizedUser == null) {
             return new CreateOrderResponseDto(finalOrder.getId(),
-                                              driver.getId(),
-                                              this.usersService.generateAccessToken(driver));
+                    driver.getId(),
+                    this.usersService.generateAccessToken(driver));
         }
 
         return new CreateOrderResponseDto(finalOrder.getId(), null, null);
@@ -106,12 +109,12 @@ public class CreateOrderCommand {
 
     private CreateOrderResponseDto getResponseIfDuplicatedOrder(CreateOrderRequestDto requestDto) {
         Order duplicateOrder =
-            this.orderRepository.findOrderByGuaranteeUuid(requestDto.getGuaranteeUuid());
+                this.orderRepository.findOrderByGuaranteeUuid(requestDto.getGuaranteeUuid());
 
         if (duplicateOrder != null && duplicateOrder.getDriver() != null) {
             return new CreateOrderResponseDto(duplicateOrder.getId(),
-                                              duplicateOrder.getDriver().getId(),
-                                              this.usersService.generateAccessToken(duplicateOrder.getDriver()));
+                    duplicateOrder.getDriver().getId(),
+                    this.usersService.generateAccessToken(duplicateOrder.getDriver()));
         }
 
         return null;
@@ -122,8 +125,8 @@ public class CreateOrderCommand {
         // case if driver creates second order
         if (authorizedUser != null && authorizedUser.getRole() == UserRole.DRIVER) {
             boolean isAnotherDriverData =
-                !Objects.equals(authorizedUser.getPhone(), createOrderRequest.getDriverPhone()) ||
-                !Objects.equals(authorizedUser.getName(), createOrderRequest.getDriverName());
+                    !Objects.equals(authorizedUser.getPhone(), createOrderRequest.getDriverPhone()) ||
+                            !Objects.equals(authorizedUser.getName(), createOrderRequest.getDriverName());
 
             if (isAnotherDriverData) {
                 authorizedUser.setPhone(createOrderRequest.getDriverPhone());
@@ -132,16 +135,16 @@ public class CreateOrderCommand {
                 }
 
                 UpdateUserRequestDto updateUserRequest =
-                    new UpdateUserRequestDto(authorizedUser.getId(),
-                                             authorizedUser.getName(),
-                                             authorizedUser.getInn(),
-                                             authorizedUser.getEmail(),
-                                             authorizedUser.getPhone(),
-                                             null,
-                                             null,
-                                             createOrderRequest.getRegionId(),
-                                             createOrderRequest.getCity(),
-                                             createOrderRequest.getStreet());
+                        new UpdateUserRequestDto(authorizedUser.getId(),
+                                authorizedUser.getName(),
+                                authorizedUser.getInn(),
+                                authorizedUser.getEmail(),
+                                authorizedUser.getPhone(),
+                                null,
+                                null,
+                                createOrderRequest.getRegionId(),
+                                createOrderRequest.getCity(),
+                                createOrderRequest.getStreet());
                 this.usersService.update(authorizedUser, updateUserRequest);
                 return authorizedUser;
             }
@@ -151,18 +154,18 @@ public class CreateOrderCommand {
 
         // case if anonymous driver
         if (createOrderRequest.getDriverPhone() != null &&
-            createOrderRequest.getDriverName() != null) {
+                createOrderRequest.getDriverName() != null) {
             User driverByPhone =
-                this.usersService.getUserByPhone(createOrderRequest.getDriverPhone(),
-                                                 UserRole.DRIVER);
+                    this.usersService.getUserByPhone(createOrderRequest.getDriverPhone(),
+                            UserRole.DRIVER);
             if (driverByPhone != null) {
                 return driverByPhone;
             }
 
             return this.usersService.createUser(createOrderRequest.getDriverName(),
-                                                createOrderRequest.getDriverPhone(),
-                                                createOrderRequest.getDriverEmail(),
-                                                UserRole.DRIVER);
+                    createOrderRequest.getDriverPhone(),
+                    createOrderRequest.getDriverEmail(),
+                    UserRole.DRIVER);
         }
 
         throw new RuntimeException("Driver should be present in any order");
@@ -170,18 +173,18 @@ public class CreateOrderCommand {
 
     private User getCustomerIfAuthorized(User authorizedUser) {
         return authorizedUser != null && authorizedUser.getRole() == UserRole.CUSTOMER ?
-               authorizedUser :
-               null;
+                authorizedUser :
+                null;
     }
 
     private Address createAddress(CreateOrderRequestDto createOrderRequest) {
         Region region = this.regionsService.getRegionById(createOrderRequest.getRegionId());
         Address address = new Address(null,
-                                      region,
-                                      createOrderRequest.getCity(),
-                                      createOrderRequest.getStreet(),
-                                      null,
-                                      null);
+                region,
+                createOrderRequest.getCity(),
+                createOrderRequest.getStreet(),
+                null,
+                null);
         return this.addressesService.createAddress(address);
     }
 
@@ -197,14 +200,14 @@ public class CreateOrderCommand {
                 auto = this.autoService.getAutoById(autoDto.getAutoId());
             } else {
                 auto = Auto.builder()
-                           .brand(autoDto.getBrand())
-                           .model(autoDto.getModel())
-                           .vin(autoDto.getVin())
-                           .number(autoDto.getNumber())
-                           .type(autoDto.getType())
-                           .driver(driver)
-                           .customer(customer)
-                           .build();
+                        .brand(autoDto.getBrand())
+                        .model(autoDto.getModel())
+                        .vin(autoDto.getVin())
+                        .number(autoDto.getNumber())
+                        .type(autoDto.getType())
+                        .driver(driver)
+                        .customer(customer)
+                        .build();
                 auto = this.autoService.createAuto(auto);
             }
 
@@ -217,9 +220,9 @@ public class CreateOrderCommand {
     private void sendNotificationToRegionMasters(Long orderId) {
         Order order = this.orderRepository.findById(orderId).orElseThrow();
         List<User> mastersInRegion =
-            this.usersService.getMastersWithTelegramInRegion(order.getAddress()
-                                                                  .getRegion()
-                                                                  .getId());
+                this.usersService.getMastersWithTelegramInRegion(order.getAddress()
+                        .getRegion()
+                        .getId());
         List<User> admins = this.usersService.getAdmins();
 
         List<User> mastersAndAdmins = new ArrayList<>();
@@ -234,13 +237,13 @@ public class CreateOrderCommand {
             }
 
             SignInUserResponseDto masterAuth =
-                this.usersService.getUserAccessNoAuth(masterOrAdmin.getId());
-            String authLink = "https://app.gruzhub.ru?userId=" +
-                              masterAuth.getId() +
-                              "&accessToken=" +
-                              masterAuth.getAccessToken() +
-                              "&orderId=" +
-                              order.getId();
+                    this.usersService.getUserAccessNoAuth(masterOrAdmin.getId());
+            String authLink = appUrl + "?userId=" +
+                    masterAuth.getId() +
+                    "&accessToken=" +
+                    masterAuth.getAccessToken() +
+                    "&orderId=" +
+                    order.getId();
 
             try {
                 InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
@@ -255,8 +258,8 @@ public class CreateOrderCommand {
                 if (masterOrAdmin.getConnectedTelegramChats() != null) {
                     for (TelegramChat chat : masterOrAdmin.getConnectedTelegramChats()) {
                         this.telegramSenderService.sendMessage(chat.getTelegramChatId(),
-                                                               message,
-                                                               keyboardMarkup);
+                                message,
+                                keyboardMarkup);
                     }
                 }
             } catch (Exception e) {
@@ -267,10 +270,10 @@ public class CreateOrderCommand {
 
     private String getCreatedOrderMessage(Order order) {
         StringBuilder message = new StringBuilder("Создан заказ #").append(order.getId())
-                                                                   .append(" в регионе ")
-                                                                   .append(order.getAddress()
-                                                                                .getRegion()
-                                                                                .getName());
+                .append(" в регионе ")
+                .append(order.getAddress()
+                        .getRegion()
+                        .getName());
 
         for (Auto auto : order.getAutos()) {
             if (auto.getType() == AutoType.TRUCK) {
@@ -297,8 +300,8 @@ public class CreateOrderCommand {
         }
 
         message.append("\n\nСрочность: ")
-               .append(order.getUrgency())
-               .append("\n\nДля просмотра - https://app.gruzhub.ru");
+                .append(order.getUrgency())
+                .append("\n\nДля просмотра - " + appUrl);
 
         return message.toString();
     }

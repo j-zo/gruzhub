@@ -7,16 +7,16 @@ enum Pages {
   USERS = "/users",
 }
 
-const isProdForDev = false;
+//const isProdForDev = process.env.NODE_ENV === "production";
 
 let APPLICATION_SERVER = process.env.NEXT_PUBLIC_APPLICATION_SERVER || "";
 let SSR_APPLICATION_SERVER =
   process.env.NEXT_PUBLIC_SSR_APPLICATION_SERVER || "";
 
-if (isProdForDev) {
-  APPLICATION_SERVER = "https://app.gruzhub.ru";
-  SSR_APPLICATION_SERVER = "https://app.gruzhub.ru";
-}
+// if (isProdForDev) {
+//   APPLICATION_SERVER = "https://app.gruzhub.ru";
+//   SSR_APPLICATION_SERVER = "https://app.gruzhub.ru";
+// }
 
 // authorization
 const AUTHORIED_USER_TOKEN_KEY =
