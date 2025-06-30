@@ -1,28 +1,18 @@
 "use client";
-import { Menu } from "../../features/menu/presentation/Menu";
-import {
-  AUTHORIED_USER_TOKEN_KEY,
-  AUTHORIED_USER_ID_KEY,
-} from "../../constants";
+import {Menu} from "../../features/menu/presentation/Menu";
+import {AUTHORIED_USER_ID_KEY, AUTHORIED_USER_TOKEN_KEY,} from "../../constants";
 import UserApiRepository from "../../features/user/data/UserApiRepository";
 import ApiHelper from "../../util/api/ApiHelper";
-import {
-  Button,
-  Checkbox,
-  Modal,
-  NumberInput,
-  Select,
-  TextInput,
-} from "@mantine/core";
-import { useEffect, useState } from "react";
-import { User } from "../../features/user/domain/User";
+import {Button, Checkbox, FileButton, Group, Modal, NumberInput, Select, TextInput,} from "@mantine/core";
+import {useEffect, useState} from "react";
+import {User} from "../../features/user/domain/User";
 import LoadingComponent from "../../util/components/LoadingComponent";
-import { UserRole } from "../../features/user/domain/UserRole";
-import { PhoneInput } from "../../util/components/PhoneInput";
+import {UserRole} from "../../features/user/domain/UserRole";
+import {PhoneInput} from "../../util/components/PhoneInput";
 import FormValidator from "../../util/FormValidator";
 import StringUtils from "../../util/StringUtils";
-import { useRegions } from "../../features/regions/hooks/useRegions";
-import { useCountries } from "../../features/regions/hooks/useCountries";
+import {useRegions} from "../../features/regions/hooks/useRegions";
+import {useCountries} from "../../features/regions/hooks/useCountries";
 
 const apiHelper = new ApiHelper();
 const userApiRepository = new UserApiRepository(
@@ -67,10 +57,18 @@ export default function Page() {
 
   const [creatingChatCode, setCreatingChatCode] = useState<string>("");
 
+  const [autosExcel, setAutosExcel] = useState(null);
+  const [uploadingAutos, setUploadingAutos] = useState(false);
+
   const updateUser = (user: User) => {
     setUser(JSON.parse(JSON.stringify(user)));
     setUnsaved(true);
   };
+
+  const uploadAutos = () => {
+
+  }
+
 
   const validateFieldsForUpdate = (): boolean => {
     if (!user?.name) {
@@ -467,6 +465,16 @@ export default function Page() {
                   type="password"
                 />
               </>
+            )}
+
+            {user.role == UserRole.CUSTOMER && (
+                <div className="mt-7">
+                  <Group>
+                    <FileButton onChange={uploadAutos} accept="image/png,image/jpeg">
+                      {(props) => <Button {...props}>Загрузить список транспорта</Button>}
+                    </FileButton>
+                  </Group>
+                </div>
             )}
 
             {user.role === UserRole.MASTER && (
