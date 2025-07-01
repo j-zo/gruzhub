@@ -18,15 +18,9 @@ export class OrderApiRepository {
     const requestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify(order));
 
-    if (this.userApiRepository.isAuthorized()) {
-      requestOptions.addHeader(
-        "Authorization",
-        this.userApiRepository.getAuthorizedData().accessToken
-      );
-    }
-
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/orders/create`,
+        this.userApiRepository,
       requestOptions
     );
   }
@@ -38,10 +32,7 @@ export class OrderApiRepository {
     ordersLimit: number
   ): Promise<Order[]> {
     const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
+
     requestOptions.setBody(
       JSON.stringify({
         statuses,
@@ -53,20 +44,15 @@ export class OrderApiRepository {
 
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/orders/orders`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async getOrder(orderId: number): Promise<Order> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/${orderId}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
@@ -75,107 +61,70 @@ export class OrderApiRepository {
     orderId: number
   ): Promise<UserInfoChange[]> {
     const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/user-changes?userId=${userId}&orderId=${orderId}`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async startCalculationByMaster(orderId: number) {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/start_calculation_by_master`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async declineMasterByCustomer(orderId: number, comment: string) {
     const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
     requestOptions.setBody(JSON.stringify({ comment }));
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/decline_order_master`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async sendForConfirmationByMaster(orderId: number) {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/send_for_confirmation_by_master`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async acceptByCustomer(orderId: number) {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/accept_by_customer`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async cancelOrder(orderId: number, comment: string) {
     const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
     requestOptions.setBody(JSON.stringify({ comment }));
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/cancel_order`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async completeOrder(orderId: number) {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/orders/${orderId}/complete_order`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async getOrderStatusChanges(orderId: number): Promise<OrderStatusChange[]> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/order-status-changes/${orderId}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 }

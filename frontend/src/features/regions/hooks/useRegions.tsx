@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { RegionApiRepository } from "../data/RegionApiRepository";
 import { Region } from "../domain/Region";
 import ApiHelper from "../../../util/api/ApiHelper";
+import UserApiRepository from "@/features/user/data/UserApiRepository";
 
 export const useRegions = (isOnlyRussia = true) => {
   const [regions, setRegions] = useState<Region[]>([]);
@@ -9,8 +10,11 @@ export const useRegions = (isOnlyRussia = true) => {
   useEffect(() => {
     (async () => {
       try {
+        const apiHelper = new ApiHelper()
+
         let loadedRegions = await new RegionApiRepository(
-          new ApiHelper()
+            new UserApiRepository(apiHelper, '', ''),
+            apiHelper
         ).getRegions();
 
         if (isOnlyRussia) {

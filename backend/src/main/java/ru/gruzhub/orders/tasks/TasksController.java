@@ -27,32 +27,28 @@ public class TasksController {
 
     @PostMapping("/create")
     public TaskResponseDto createTask(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
         @RequestBody CreateTaskDto createTask) {
-        User user = this.usersService.getUserFromToken(authorization);
+        User user = this.usersService.getCurrentUser();
         return this.tasksService.createTask(user, createTask);
     }
 
     @PostMapping("/update")
-    public void updateTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-                           @RequestBody UpdateTaskDto updateTask) {
-        User user = this.usersService.getUserFromToken(authorization);
+    public void updateTask(@RequestBody UpdateTaskDto updateTask) {
+        User user = this.usersService.getCurrentUser();
         this.tasksService.updateTask(user, updateTask);
     }
 
     @DeleteMapping("/delete/{taskId}")
-    public void deleteTask(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
-                           @PathVariable("taskId") Long taskId) {
-        User user = this.usersService.getUserFromToken(authorization);
+    public void deleteTask(@PathVariable("taskId") Long taskId) {
+        User user = this.usersService.getCurrentUser();
         this.tasksService.deleteTask(user, taskId);
     }
 
     @GetMapping("/order_auto_tasks")
     public List<TaskResponseDto> getOrderAutoTasks(
-        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
         @RequestParam(required = false) Long orderId,
         @RequestParam(required = false) Long autoId) {
-        User user = this.usersService.getUserFromToken(authorization);
+        User user = this.usersService.getCurrentUser();
         return this.tasksService.getOrderAutoTasks(user, orderId, autoId);
     }
 }

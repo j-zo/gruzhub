@@ -48,12 +48,8 @@ public class CreateOrderCommand {
     @Value("${app.url}")
     private String appUrl;
 
-    public CreateOrderResponseDto createOrder(@Nullable String authorization,
-                                              CreateOrderRequestDto createOrderRequest) {
-        User authorizedUser = null;
-        if (authorization != null) {
-            authorizedUser = this.usersService.getUserFromToken(authorization);
-        }
+    public CreateOrderResponseDto createOrder(CreateOrderRequestDto createOrderRequest) {
+        User authorizedUser = this.usersService.getCurrentUser();
 
         CreateOrderResponseDto createOrderResponseDto =
                 this.getResponseIfDuplicatedOrder(createOrderRequest);

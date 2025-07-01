@@ -26,6 +26,7 @@ export default class UserApiRepository {
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/users/signup`,
+        this,
       requestOptions
     );
   }
@@ -33,13 +34,9 @@ export default class UserApiRepository {
   async updateUser(updateUser: UpdateUser) {
     const requestOptions: RequestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify(updateUser));
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper
-      .fetchPostRaw(`${APPLICATION_SERVER}/api/users/update`, requestOptions)
+      .fetchPostRaw(`${APPLICATION_SERVER}/api/users/update`, this, requestOptions)
       .then(() => {
         if (updateUser.password) {
           return this.signIn(
@@ -55,10 +52,7 @@ export default class UserApiRepository {
 
   async getUsers(regionsIds?: number[], userRoles?: string[]): Promise<User[]> {
     const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
+
     requestOptions.setBody(
       JSON.stringify({
         roles: userRoles,
@@ -68,6 +62,7 @@ export default class UserApiRepository {
 
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/users/users`,
+        this,
       requestOptions
     );
   }
@@ -84,6 +79,7 @@ export default class UserApiRepository {
     return this.apiHelper
       .fetchPostJson(
         `${APPLICATION_SERVER}/api/users/signin`,
+          this,
         requestOptions,
         true
       )
@@ -96,21 +92,16 @@ export default class UserApiRepository {
   }
 
   async getUserById(userId: number): Promise<User> {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/users/${userId}`,
-      requestOptions
+      this
     );
   }
 
   async sendResetEmail(email: string, role: UserRole): Promise<void> {
     return this.apiHelper.fetchGetRaw(
-      `${APPLICATION_SERVER}/api/users/reset-code?email=${email}&role=${role}`
+      `${APPLICATION_SERVER}/api/users/reset-code?email=${email}&role=${role}`,
+        this
     );
   }
 
@@ -121,73 +112,48 @@ export default class UserApiRepository {
     role: UserRole
   ): Promise<void> {
     return this.apiHelper.fetchGetRaw(
-      `${APPLICATION_SERVER}/api/users/reset-password?email=${email}&code=${code}&password=${password}&role=${role}`
+      `${APPLICATION_SERVER}/api/users/reset-password?email=${email}&code=${code}&password=${password}&role=${role}`,
+        this
     );
   }
 
   async connectTelegramViaTgAuth(queryParams: string) {
     const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
     requestOptions.setBody(JSON.stringify({ queryParams }));
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/users/connect-telegram-via-tg-auth`,
+        this,
       requestOptions
     );
   }
 
   async connectTelegramViaWebapp(tgId: number) {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/users/connect-telegram-via-webapp?tgId=${tgId}`,
-      requestOptions
+      this
     );
   }
 
   async getUserAccess(userId: number): Promise<SignInResponse> {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/users/get-access/${userId}`,
-      requestOptions
+      this
     );
   }
 
   async connectTelegramChat(chatUuid: string) {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/users/connect-chat?chatUuid=${chatUuid}`,
-      requestOptions
+      this
     );
   }
 
   async disconnectTelegramChat(chatUuid: string) {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/users/disconnect-chat?chatUuid=${chatUuid}`,
-      requestOptions
+      this
     );
   }
 

@@ -1,6 +1,6 @@
 "use client";
 import {Menu} from "../../features/menu/presentation/Menu";
-import {AUTHORIED_USER_ID_KEY, AUTHORIED_USER_TOKEN_KEY,} from "../../constants";
+import {APPLICATION_SERVER, AUTHORIED_USER_ID_KEY, AUTHORIED_USER_TOKEN_KEY,} from "../../constants";
 import UserApiRepository from "../../features/user/data/UserApiRepository";
 import ApiHelper from "../../util/api/ApiHelper";
 import {Button, Checkbox, FileButton, Group, Modal, NumberInput, Select, TextInput,} from "@mantine/core";
@@ -13,6 +13,7 @@ import FormValidator from "../../util/FormValidator";
 import StringUtils from "../../util/StringUtils";
 import {useRegions} from "../../features/regions/hooks/useRegions";
 import {useCountries} from "../../features/regions/hooks/useCountries";
+import RequestOptions from "@/util/api/RequestOptions";
 
 const apiHelper = new ApiHelper();
 const userApiRepository = new UserApiRepository(
@@ -57,18 +58,43 @@ export default function Page() {
 
   const [creatingChatCode, setCreatingChatCode] = useState<string>("");
 
-  const [autosExcel, setAutosExcel] = useState(null);
-  const [uploadingAutos, setUploadingAutos] = useState(false);
+  const [autos, setAutos] = useState<File | null>(null);
+  const [autosLoading, setAutosLoading] = useState(false);
 
   const updateUser = (user: User) => {
     setUser(JSON.parse(JSON.stringify(user)));
     setUnsaved(true);
   };
 
-  const uploadAutos = () => {
+  const uploadAutos = async (selectedFile: File | null) => {
+    if (!selectedFile) return;
+    setAutosLoading(true);
 
-  }
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
 
+      const requestOptions = new RequestOptions();
+      requestOptions.setFormData(formData);
+
+      const result = await apiHelper.fetchPostMultipart(
+          `${APPLICATION_SERVER}/api/auto/upload`,
+          userApiRepository,
+          requestOptions
+      );
+
+      if (result.ok) {
+        alert("Файл успешно загружен!");
+      } else {
+        alert("Не удалось загрузить файл.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Не удалось загрузить файл.");
+    } finally {
+      setAutosLoading(false);
+    }
+  };
 
   const validateFieldsForUpdate = (): boolean => {
     if (!user?.name) {
@@ -470,11 +496,18 @@ export default function Page() {
             {user.role == UserRole.CUSTOMER && (
                 <div className="mt-7">
                   <Group>
-                    <FileButton onChange={uploadAutos} accept="image/png,image/jpeg">
+                    <FileButton onChange={uploadAutos} accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                       {(props) => <Button {...props}>Загрузить список транспорта</Button>}
                     </FileButton>
+
+                    {autosLoading && (
+                        <>
+                          <LoadingComponent />
+                        </>
+                    )}
                   </Group>
                 </div>
+
             )}
 
             {user.role === UserRole.MASTER && (

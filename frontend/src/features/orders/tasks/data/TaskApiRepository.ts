@@ -14,13 +14,9 @@ export class TaskApiRepository {
     const requestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify(task));
 
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/tasks/create`,
+        this.userApiRepository,
       requestOptions
     );
   }
@@ -29,42 +25,27 @@ export class TaskApiRepository {
     const requestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify(task));
 
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/tasks/update`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async deleteTask(taskId: number): Promise<Task> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchDeleteJson(
       `${APPLICATION_SERVER}/api/tasks/delete/${taskId}`,
-      requestOptions
+        this.userApiRepository
     );
   }
 
   async getTasks(orderId: number, autoId?: number): Promise<Task[]> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/tasks/order_auto_tasks?orderId=${orderId}${
         autoId ? `&autoId=${autoId}` : ""
       }`,
-      requestOptions
+        this.userApiRepository
     );
   }
 }

@@ -28,6 +28,16 @@ public class JwtTokenUtil {
                    .compact();
     }
 
+    public boolean isTokenExpired(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(this.envVariables.JWT_SECRET_KEY.getBytes())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        return expiration.before(new Date());
+    }
+
     public Claims getClaimsFromToken(String token) {
         String jwtSecretKey = this.envVariables.JWT_SECRET_KEY;
         return Jwts.parserBuilder()

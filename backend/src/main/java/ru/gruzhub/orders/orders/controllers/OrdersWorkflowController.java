@@ -25,11 +25,8 @@ public class OrdersWorkflowController {
     private final UsersService usersService;
 
     @PostMapping("/create")
-    public CreateOrderResponseDto createOrder(@RequestHeader(value = HttpHeaders.AUTHORIZATION,
-                                                             required = false) String authorization,
-                                              @RequestBody
-                                              CreateOrderRequestDto createOrderRequest) {
-        return this.workflowService.createOrder(authorization, createOrderRequest);
+    public CreateOrderResponseDto createOrder(@RequestBody CreateOrderRequestDto createOrderRequest) {
+        return this.workflowService.createOrder(createOrderRequest);
     }
 
     @GetMapping("/{orderId}/start_calculation_by_master")

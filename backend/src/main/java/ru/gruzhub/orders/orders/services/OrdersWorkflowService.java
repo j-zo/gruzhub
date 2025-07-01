@@ -41,8 +41,8 @@ public class OrdersWorkflowService {
     @Value("${app.url}")
     private String siteMainUrl;
 
-    public CreateOrderResponseDto createOrder(String authorization, CreateOrderRequestDto order) {
-        return this.createOrderCommand.createOrder(authorization, order);
+    public CreateOrderResponseDto createOrder(CreateOrderRequestDto order) {
+        return this.createOrderCommand.createOrder(order);
     }
 
     public void startCalculationByMaster(User authorizedUser, Long orderId) {

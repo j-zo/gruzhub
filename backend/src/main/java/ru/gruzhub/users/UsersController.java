@@ -38,9 +38,8 @@ public class UsersController {
     }
 
     @PostMapping("/update")
-    public void update(@RequestBody UpdateUserRequestDto updateRequest,
-                       @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        this.usersService.updateRequest(updateRequest, authorization);
+    public void update(@RequestBody UpdateUserRequestDto updateRequest) {
+        this.usersService.updateRequest(updateRequest);
     }
 
     @GetMapping("/reset-code")
@@ -57,9 +56,8 @@ public class UsersController {
     }
 
     @GetMapping("/{userId}")
-    public UserResponseDto getUser(@PathVariable Long userId,
-                                   @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        return this.usersService.getUserByIdWithAuth(authorization, userId);
+    public UserResponseDto getUser(@PathVariable Long userId) {
+        return this.usersService.getUserByIdWithAuth(userId);
     }
 
     @GetMapping("/get-access/{userId}")

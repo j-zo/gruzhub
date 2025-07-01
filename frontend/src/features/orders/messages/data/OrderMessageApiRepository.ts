@@ -21,13 +21,10 @@ export class OrderMessageApiRepository {
         text: text,
       })
     );
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/orders/messages/send`,
+        this.userApiRepository,
       requestOptions
     );
   }
@@ -46,16 +43,12 @@ export class OrderMessageApiRepository {
     const requestOptions = new RequestOptions();
     requestOptions.setFormData(formData);
 
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchPostMultipart(
       `${APPLICATION_SERVER}/api/orders/messages/send-file?guaranteeId=${encodeURI(
         guaranteeId
       )}&orderId=${orderId}&filename=${filename}&extension=${extension}`,
-      requestOptions
+        this.userApiRepository,
+      requestOptions,
     );
   }
 
@@ -64,53 +57,34 @@ export class OrderMessageApiRepository {
   ): Promise<OrderMessage[]> {
     const requestOptions = new RequestOptions();
     requestOptions.setBody(JSON.stringify({ ordersIds: ordersIds }));
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchPostJson(
       `${APPLICATION_SERVER}/api/orders/messages/last-messages-per-order`,
+        this.userApiRepository,
       requestOptions
     );
   }
 
   async getOrderMessages(orderId: number): Promise<OrderMessage[]> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/messages/get-order-messages/${orderId}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async getOrderMessagesUsers(orderId: number): Promise<User[]> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/messages/get-order-messages-users/${orderId}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 
   async setMessagesViewedByCurrentUserRole(orderId: number) {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetRaw(
       `${APPLICATION_SERVER}/api/orders/messages/set-messages-viewed-by-role/${orderId}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 }

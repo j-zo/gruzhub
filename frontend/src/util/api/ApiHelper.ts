@@ -31,13 +31,23 @@ export default class ApiHelper {
     this.userApiRepository = userApiRepository;
   }
 
+  private addAuthorizationToOptions(userApiRepository: UserApiRepository, requestOptions: RequestOptions) {
+    if (userApiRepository.isAuthorized()) {
+      requestOptions.addHeader(
+          "Authorization",
+          "Bearer " + userApiRepository.getAuthorizedData().accessToken
+      );
+    }
+  }
+
   async fetchPostJson<T>(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions,
     isSkipAuthError = false
   ): Promise<T> {
     const optionsWrapper = requestOptions || new RequestOptions();
-
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
     optionsWrapper
       .setMethod("POST")
       .addHeader("Content-Type", "application/json")
@@ -56,9 +66,11 @@ export default class ApiHelper {
 
   async fetchPostRaw(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<string> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .setMethod("POST")
@@ -72,9 +84,11 @@ export default class ApiHelper {
 
   async fetchGetJson<T>(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<T> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .addHeader("Content-Type", "application/json")
@@ -85,11 +99,14 @@ export default class ApiHelper {
     return response.json();
   }
 
+
   async fetchGetRaw(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<void> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .addHeader("Content-Type", "application/json")
@@ -101,10 +118,11 @@ export default class ApiHelper {
 
   async fetchPutJson<T>(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<T> {
     const optionsWrapper = requestOptions || new RequestOptions();
-
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
     optionsWrapper
       .setMethod("PUT")
       .addHeader("Content-Type", "application/json")
@@ -117,9 +135,11 @@ export default class ApiHelper {
 
   async fetchDeleteJson<T>(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<T> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .setMethod("DELETE")
@@ -132,9 +152,11 @@ export default class ApiHelper {
 
   async fetchDeleteRaw(
     url: string,
+    userApiRepository: UserApiRepository,
     requestOptions?: RequestOptions
   ): Promise<string> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .setMethod("DELETE")
@@ -145,15 +167,17 @@ export default class ApiHelper {
     return response.text();
   }
 
-  async fetchPostMultipart(url: string, requestOptions?: RequestOptions) {
+  async fetchPostMultipart<T>(url: string, userApiRepository: UserApiRepository, requestOptions?: RequestOptions): Promise<Response> {
     const optionsWrapper = requestOptions || new RequestOptions();
+    this.addAuthorizationToOptions(userApiRepository, optionsWrapper);
 
     optionsWrapper
       .setMethod("POST")
       .addHeader("Access-Control-Allow-Methods", "POST")
       .addHeader("Accept", "application/json");
 
-    await this.makeRequest(url, optionsWrapper, this.REPEAT_TRIES_COUNT);
+    const response = await this.makeRequest(url, optionsWrapper, this.REPEAT_TRIES_COUNT);
+    return response;
   }
 
   private async makeRequest(

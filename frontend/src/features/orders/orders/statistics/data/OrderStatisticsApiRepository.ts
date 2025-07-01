@@ -14,15 +14,9 @@ export default class OrderStatisticsApiRepository {
   async getOrdersStatistics(
     period: UserStatisticsPeriod
   ): Promise<OrderCreationDto[]> {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
-
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders-statistics/orders?period=${period}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 }

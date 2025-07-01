@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -156,9 +157,8 @@ public class UsersService {
         return new SignInUserResponseDto(user.getId(), accessToken);
     }
 
-    public void updateRequest(UpdateUserRequestDto updateRequest, String authorization) {
-        User authorizedUser = this.getUserModelFromToken(authorization);
-        this.update(authorizedUser, updateRequest);
+    public void updateRequest(UpdateUserRequestDto updateRequest) {
+        this.update(this.getCurrentUser(), updateRequest);
     }
 
     public void update(User authorizedUser, UpdateUserRequestDto updateRequest) {
@@ -244,8 +244,8 @@ public class UsersService {
         this.userRepository.save(user);
     }
 
-    public UserResponseDto getUserByIdWithAuth(String authorization, Long userId) {
-        User authorizedUser = this.getUserModelFromToken(authorization);
+    public UserResponseDto getUserByIdWithAuth(Long userId) {
+        User authorizedUser = this.getCurrentUser();
         User user = this.userRepository.findById(userId)
                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -429,6 +429,10 @@ public class UsersService {
         this.telegramSenderService.sendMessage(chat.getTelegramChatId(),
                                                "Чат отключён от GruzHub",
                                                null);
+    }
+
+    public User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public List<UserResponseDto> getUsers(String authorization,

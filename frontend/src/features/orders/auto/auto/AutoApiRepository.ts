@@ -11,22 +11,13 @@ export class AutoApiRepository {
   ) {}
 
   async getOrderAuto(orderId: number, autoId: number): Promise<Auto> {
-    const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/orders/auto?orderId=${orderId}&autoId=${autoId}`,
-      requestOptions
+        this.userApiRepository
     );
   }
   async updateOrderAuto(orderId: number, autoId: number, auto: Auto) {
     const requestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
     requestOptions.setBody(
       JSON.stringify({
         orderId,
@@ -37,6 +28,7 @@ export class AutoApiRepository {
 
     return this.apiHelper.fetchPostRaw(
       `${APPLICATION_SERVER}/api/orders/auto`,
+        this.userApiRepository,
       requestOptions
     );
   }
