@@ -14,15 +14,10 @@ export default class UserStatisticsApiRepository {
   async getRegistrationsStatistics(
     period: UserStatisticsPeriod
   ): Promise<RegistrationDto[]> {
-    const requestOptions: RequestOptions = new RequestOptions();
-    requestOptions.addHeader(
-      "Authorization",
-      this.userApiRepository.getAuthorizedData().accessToken
-    );
 
     return this.apiHelper.fetchGetJson(
       `${APPLICATION_SERVER}/api/users-statistics/registrations?period=${period}`,
-      requestOptions
+      this.userApiRepository
     );
   }
 }
