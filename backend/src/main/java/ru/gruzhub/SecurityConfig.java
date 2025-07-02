@@ -27,10 +27,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/addresses/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/signin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/signup").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/reset-code").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users/reset-password").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .anyRequest().authenticated()
 
                 )
@@ -47,7 +44,8 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all endpoints
-                        .allowedOrigins("http://localhost:3000") // Your frontend origin
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://localhost/") // Your frontend origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowCredentials(true); // If you use cookies/auth headers
             }
