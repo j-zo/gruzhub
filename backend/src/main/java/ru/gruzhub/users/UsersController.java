@@ -1,6 +1,8 @@
 package ru.gruzhub.users;
 
 import java.util.List;
+
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +29,13 @@ import ru.gruzhub.users.models.User;
 public class UsersController {
     private final UsersService usersService;
 
+    @PermitAll
     @PostMapping("/signup")
     public void signUp(@RequestBody CreateUserRequestDto userRequest) {
         this.usersService.signUp(userRequest);
     }
 
+    @PermitAll
     @PostMapping("/signin")
     public SignInUserResponseDto signIn(@RequestBody SignInUserRequestDto signInRequest) {
         return this.usersService.signIn(signInRequest);
@@ -42,11 +46,13 @@ public class UsersController {
         this.usersService.updateRequest(updateRequest);
     }
 
+    @PermitAll
     @GetMapping("/reset-code")
     public void sendResetCode(@RequestParam String email, @RequestParam String role) {
         this.usersService.sendResetCode(email, UserRole.valueOf(role));
     }
 
+    @PermitAll
     @GetMapping("/reset-password")
     public void resetPassword(@RequestParam String email,
                               @RequestParam String role,
