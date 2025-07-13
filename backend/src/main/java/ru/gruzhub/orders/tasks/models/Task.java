@@ -15,8 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.gruzhub.orders.auto.models.Auto;
-import ru.gruzhub.orders.orders.models.Order;
+import ru.gruzhub.transport.model.Transport;
+import ru.gruzhub.orders.orders.model.Order;
 import ru.gruzhub.orders.tasks.dto.TaskResponseDto;
 
 @Entity
@@ -35,9 +35,9 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.EAGER,
                optional = false)
-    @JoinColumn(name = "auto_id",
+    @JoinColumn(name = "transport_id",
                 nullable = false)
-    private Auto auto;
+    private Transport transport;
 
     @ManyToOne(fetch = FetchType.EAGER,
                optional = false)
@@ -70,7 +70,7 @@ public class Task {
     public TaskResponseDto toDto() {
         return TaskResponseDto.builder()
                               .id(this.id)
-                              .autoId(this.auto.getId())
+                              .transportId(this.transport.getId())
                               .orderId(this.order.getId())
                               .name(this.name)
                               .description(this.description)

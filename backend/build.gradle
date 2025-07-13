@@ -51,7 +51,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-logging' // already included
     implementation 'org.slf4j:slf4j-api:2.0.9' // optional, to explicitly use SLF4J
-    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.projectlombok:lombok'
     implementation 'org.postgresql:postgresql:42.7.3'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-test'
@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.741'
     implementation 'com.google.guava:guava:33.2.1-jre'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    implementation 'org.apache.poi:poi:5.2.5'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
 }
 

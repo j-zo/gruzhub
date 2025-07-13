@@ -16,7 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.gruzhub.orders.orders.models.Order;
+import ru.gruzhub.orders.orders.model.Order;
 import ru.gruzhub.tools.files.models.File;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;

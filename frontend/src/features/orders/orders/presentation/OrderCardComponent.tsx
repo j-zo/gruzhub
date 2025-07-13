@@ -2,7 +2,7 @@ import moment from "moment";
 import "moment/locale/ru";
 import { Order } from "../domain/Order";
 import { OrderStatusNamer } from "../domain/OrderStatusNamer";
-import { AutoType } from "../../auto/domain/AutoType";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
 import { Button } from "@mantine/core";
 
 interface Props {
@@ -14,8 +14,8 @@ export const OrderCardComponent = ({
   order,
   openOrder,
 }: Props): JSX.Element => {
-  const truck = order.autos.find((auto) => auto.type === AutoType.TRUCK);
-  const trailer = order.autos.find((auto) => auto.type === AutoType.TRAILER);
+  const truck = order.transports.find((transport) => transport.type === TransportType.TRUCK);
+  const trailer = order.transports.find((transport) => transport.type === TransportType.TRAILER);
 
   return (
     <div className="lg:mr-0 mb-5 text-xs p-5 border rounded-xl shadow whitespace-nowrap w-full flex flex-col">

@@ -23,11 +23,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import ru.gruzhub.orders.auto.dto.AutoResponseDto;
-import ru.gruzhub.orders.auto.enums.AutoType;
+import ru.gruzhub.transport.dto.TransportDto;
+import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.orders.orders.dto.CreateOrderRequestDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderResponseDto;
-import ru.gruzhub.orders.orders.dto.OrderAutoDto;
+import ru.gruzhub.orders.orders.dto.OrderTransportDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
 import ru.gruzhub.users.UsersService;
@@ -69,14 +69,14 @@ public class OrdersWorkflowControllerTest {
     }
 
     @Test
-    void testCreateOrderForExistingAuto() {
-        List<OrderAutoDto> autos =
-            Collections.singletonList(OrdersWorkflowTestHelper.createOrderAuto(AutoType.TRAILER));
+    void testCreateOrderForExistingTransport() {
+        List<OrderTransportDto> transports =
+            Collections.singletonList(OrdersWorkflowTestHelper.createOrderTransport(TransportType.TRAILER));
 
         CreateOrderResponseDto firstOrderResponse =
-            OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, autos);
+            OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, transports);
         CreateOrderResponseDto secondOrderResponse =
-            OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, autos);
+            OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, transports);
 
         assertNotNull(firstOrderResponse.getAccessToken());
         assertNotNull(secondOrderResponse.getAccessToken());
@@ -88,8 +88,8 @@ public class OrdersWorkflowControllerTest {
                                                                          secondOrderResponse.getOrderId(),
                                                                          secondOrderResponse.getAccessToken());
 
-        assertEquals(firstOrder.getAutos().getFirst().getId(),
-                     secondOrder.getAutos().getFirst().getId());
+        assertEquals(firstOrder.getTransports().getFirst().getId(),
+                     secondOrder.getTransports().getFirst().getId());
     }
 
     @Test
@@ -117,15 +117,15 @@ public class OrdersWorkflowControllerTest {
         assertEquals(orderToCreate.getUrgency(), orderResponse.getUrgency());
 
         int EXPECTED_ORDERS_AUTO_COUNT = 2;
-        assertEquals(EXPECTED_ORDERS_AUTO_COUNT, orderResponse.getAutos().size());
+        assertEquals(EXPECTED_ORDERS_TRANSPORT_COUNT, orderResponse.getTransports().size());
 
         // Sort and compare autos
-        orderResponse.getAutos().sort(Comparator.comparing(AutoResponseDto::getBrand));
-        orderToCreate.getAutos().sort(Comparator.comparing(OrderAutoDto::getBrand));
+        orderResponse.getTransports().sort(Comparator.comparing(TransportDto::getBrand));
+        orderToCreate.getTransport().sort(Comparator.comparing(OrderTransportDto::getBrand));
 
         for (int i = 0; i < EXPECTED_ORDERS_AUTO_COUNT; i++) {
-            AutoResponseDto autoResponse = orderResponse.getAutos().get(i);
-            OrderAutoDto autoRequest = orderToCreate.getAutos().get(i);
+            TransportDto autoResponse = orderResponse.getTransports().get(i);
+            OrderTransportDto autoRequest = orderToCreate.getTransport().get(i);
 
             assertEquals(autoRequest.getBrand(), autoResponse.getBrand());
             assertEquals(autoRequest.getModel(), autoResponse.getModel());

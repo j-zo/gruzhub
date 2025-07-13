@@ -18,7 +18,7 @@ import ru.gruzhub.orders.orders.OrdersWorkflowTestHelper;
 import ru.gruzhub.orders.orders.dto.OrderWithUsersDto;
 import ru.gruzhub.users.UserRepository;
 import ru.gruzhub.users.UsersService;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.testing.UserTestingHelper;
 import ru.gruzhub.users.testing.dto.TestAuthDataDto;
@@ -177,7 +177,7 @@ public class OrderMessagesControllerTest {
 
         for (String accessToken : Arrays.asList(orderWithUsers.getOrderOwnerToken(),
                                                 orderWithUsers.getMasterToken())) {
-            List<UserResponseDto> users =
+            List<UserDto> users =
                 OrderMessagesControllerHelper.getOrderMessagesUsers(this.restTemplate,
                                                                     orderWithUsers.getOrderId(),
                                                                     accessToken);

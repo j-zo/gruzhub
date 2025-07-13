@@ -1,4 +1,4 @@
-import { Auto } from "../../../auto/domain/Auto";
+import { Transport } from "@/features/common/transport/domain/Transport";
 
 export interface CreateOrderRequest {
   guaranteeUuid: string;
@@ -9,7 +9,7 @@ export interface CreateOrderRequest {
   driverName: string;
   driverPhone: string;
 
-  autos: Auto[];
+  transports: Transport[];
 
   regionId: number;
   description?: string;

@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import UserApiRepository from "../../../user/data/UserApiRepository";
 import { User } from "../../../user/domain/User";
 import { Order } from "../../orders/domain/Order";
-import { TaskApiRepository } from "../data/TaskApiRepository";
+import { TaskApiRepository } from "@/features/orders/tasks/data/TaskApiRepository";
 import { Task } from "../domain/Task";
 import LoadingComponent from "../../../../util/components/LoadingComponent";
 import { Button } from "@mantine/core";
 import { UserRole } from "../../../user/domain/UserRole";
 import { TaskDialogComponent } from "./TaskDialogComponent";
-import { AutoType } from "../../auto/domain/AutoType";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
 import Image from "next/image";
 
 interface Props {
@@ -115,8 +115,8 @@ export const OrderTasksComponent = ({
                   <tbody>
                     {tasks.map((task) => {
                       const isTruck =
-                        order.autos.find((auto) => auto.id == task.autoId)
-                          ?.type === AutoType.TRUCK;
+                        order.transports.find((transport) => transport.id == task.transportId)
+                          ?.type === TransportType.TRUCK;
 
                       return (
                         <tr key={`task_${task.id}`}>

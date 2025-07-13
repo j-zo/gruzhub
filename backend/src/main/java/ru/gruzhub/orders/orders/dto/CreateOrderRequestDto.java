@@ -3,6 +3,7 @@ package ru.gruzhub.orders.orders.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.Data;
+import ru.gruzhub.transport.dto.TransportDto;
 
 @Data
 public class CreateOrderRequestDto {
@@ -10,7 +11,7 @@ public class CreateOrderRequestDto {
     private String driverName;
     private String driverPhone;
     private String driverEmail;
-    private List<OrderAutoDto> autos;
+    private List<TransportDto> transport;
     private Long regionId;
     private String city;
     private String street;

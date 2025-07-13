@@ -1,6 +1,6 @@
 export interface Task {
   id: number;
-  autoId: number;
+  transportId: number;
   orderId: number;
 
   name: string;

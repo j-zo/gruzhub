@@ -23,8 +23,8 @@ import LoadingComponent from "../../../../util/components/LoadingComponent";
 import Link from "next/link";
 import { OrderApiRepository } from "../data/OrderApiRepository";
 import { CreateOrderRequest } from "../domain/dto/CreateOrderRequest";
-import { AutoType } from "../../auto/domain/AutoType";
-import { Auto } from "../../auto/domain/Auto";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
+import { Transport } from "@/features/common/transport/domain/Transport";
 import { Random } from "../../../../util/Random";
 import { User } from "../../../user/domain/User";
 import { UserRole } from "../../../user/domain/UserRole";
@@ -143,20 +143,24 @@ export const CreateOrderComponent = ({
         (problem) => (trailerProblemsString += `\n- ${problem}`)
       );
 
-      const autos: Auto[] = [];
+      const transports: Transport[] = [];
       if (isTruck) {
-        autos.push({
+        transports.push({
           id: undefined as unknown as number,
           brand: truckBrand,
           model: truckModel,
-          type: AutoType.TRUCK,
+          type: TransportType.TRUCK,
+          parkNumber: parkNumber
+          // TODO parknumber
         });
       }
       if (isTrailer) {
-        autos.push({
+        transports.push({
           id: undefined as unknown as number,
           model: trailerModel,
-          type: AutoType.TRAILER,
+          type: TransportType.TRAILER,
+          parkNumber: parkNUmber
+          //TODO
         });
       }
 
@@ -175,7 +179,7 @@ export const CreateOrderComponent = ({
         isNeedEvacuator,
         isNeedMobileTeam,
 
-        autos: autos,
+        transports: transports,
 
         urgency: urgency.toLowerCase(),
       };

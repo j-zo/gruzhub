@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gruzhub.address.models.Country;
 import ru.gruzhub.address.models.Region;
+import ru.gruzhub.address.service.RegionsService;
 
 @RestController
 @RequestMapping("/addresses")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class RegionsController {
     private final RegionsService regionsService;

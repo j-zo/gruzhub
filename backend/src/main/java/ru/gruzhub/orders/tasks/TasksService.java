@@ -7,10 +7,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.gruzhub.orders.auto.AutoService;
-import ru.gruzhub.orders.auto.models.Auto;
-import ru.gruzhub.orders.orders.models.Order;
-import ru.gruzhub.orders.orders.services.OrdersDataService;
+import ru.gruzhub.transport.service.TransportService;
+import ru.gruzhub.transport.model.Transport;
+import ru.gruzhub.orders.orders.model.Order;
+import ru.gruzhub.orders.orders.service.OrdersDataService;
 import ru.gruzhub.orders.tasks.dto.CreateTaskDto;
 import ru.gruzhub.orders.tasks.dto.TaskResponseDto;
 import ru.gruzhub.orders.tasks.dto.UpdateTaskDto;
@@ -21,13 +21,13 @@ import ru.gruzhub.users.models.User;
 @Service
 @RequiredArgsConstructor
 public class TasksService {
-    private final AutoService autoService;
+    private final TransportService transportService;
     private final TaskRepository taskRepository;
     private final OrdersDataService ordersDataService;
 
     public TaskResponseDto createTask(User user, CreateTaskDto createRequest) {
         Order order = this.ordersDataService.getOrderById(user, createRequest.getOrderId());
-        Auto auto = this.autoService.getAutoById(createRequest.getAutoId());
+        Transport transport = this.transportService.getTransportById(createRequest.getTransportId());
 
         assert order.getMaster() != null;
         if (!Objects.equals(order.getMaster().getId(), user.getId())) {
@@ -35,14 +35,14 @@ public class TasksService {
                                               "You are not the master of this order.");
         }
 
-        List<Long> orderAutosIds = order.getAutos().stream().map(Auto::getId).toList();
-        if (!orderAutosIds.contains(auto.getId())) {
+        List<Long> orderTransportIds = order.getTransport().stream().map(Transport::getId).toList();
+        if (!orderTransportIds.contains(transport.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                                              "Auto does not belong to the order.");
+                                              "Transport does not belong to the order.");
         }
 
         Task task = Task.builder()
-                        .auto(auto)
+                        .transport(transport)
                         .order(order)
                         .name(createRequest.getName())
                         .description(createRequest.getDescription())
@@ -84,10 +84,10 @@ public class TasksService {
         this.taskRepository.delete(task);
     }
 
-    public List<TaskResponseDto> getOrderAutoTasks(User authorizedUser, Long orderId, Long autoId) {
-        if (orderId == null && autoId == null) {
+    public List<TaskResponseDto> getOrderTransportTasks(User authorizedUser, Long orderId, Long transportId) {
+        if (orderId == null && transportId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                                              "Either orderId or autoId should be specified");
+                                              "Either orderId or transportId should be specified");
         }
 
         Order order = this.ordersDataService.getOrderById(authorizedUser, orderId);
@@ -111,9 +111,9 @@ public class TasksService {
 
         List<Task> tasks;
 
-        if (autoId != null) {
-            tasks = this.taskRepository.findByOrderIdAndAutoId(orderId,
-                                                               autoId,
+        if (transportId != null) {
+            tasks = this.taskRepository.findByOrderIdAndTransportId(orderId,
+                                                               transportId,
                                                                Sort.by(Sort.Direction.DESC, "id"));
         } else {
             tasks = this.taskRepository.findByOrderId(orderId, Sort.by(Sort.Direction.DESC, "id"));

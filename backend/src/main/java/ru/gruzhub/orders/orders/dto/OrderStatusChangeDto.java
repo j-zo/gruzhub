@@ -2,7 +2,7 @@ package ru.gruzhub.orders.orders.dto;
 
 import lombok.Data;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 
 @Data
 public class OrderStatusChangeDto {
@@ -10,7 +10,7 @@ public class OrderStatusChangeDto {
     private Long updatedAt;
     private Long orderId;
     private OrderStatus newStatus;
-    private UserResponseDto updatedBy;
-    private UserResponseDto master;
+    private UserDto updatedBy;
+    private UserDto master;
     private String comment;
 }

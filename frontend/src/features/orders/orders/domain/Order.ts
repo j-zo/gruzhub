@@ -1,5 +1,5 @@
 import { User } from "../../../user/domain/User";
-import { Auto } from "../../auto/domain/Auto";
+import { Transport } from "@/features/common/transport/domain/Transport";
 import { Address } from "./Address";
 import { OrderStatus } from "./OrderStatus";
 
@@ -11,7 +11,7 @@ export interface Order {
   masterId?: number;
   driverId?: number;
 
-  autos: Auto[];
+  transports: Transport[];
 
   description?: string;
   notes?: string;

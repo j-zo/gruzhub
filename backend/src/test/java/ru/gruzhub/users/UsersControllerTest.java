@@ -25,7 +25,7 @@ import ru.gruzhub.users.dto.GetUsersRequestDto;
 import ru.gruzhub.users.dto.SignInUserRequestDto;
 import ru.gruzhub.users.dto.SignInUserResponseDto;
 import ru.gruzhub.users.dto.UpdateUserRequestDto;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.testing.UserTestingHelper;
 import ru.gruzhub.users.testing.dto.TestAuthDataDto;
@@ -80,14 +80,14 @@ class UsersControllerTest {
         headers.set("Authorization", accessToken);
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<UserResponseDto> getUserResponse =
+        ResponseEntity<UserDto> getUserResponse =
             this.restTemplate.exchange("/users/" + userId,
                                        HttpMethod.GET,
                                        entity,
-                                       UserResponseDto.class);
+                                       UserDto.class);
         assertEquals(HttpStatus.OK, getUserResponse.getStatusCode());
 
-        UserResponseDto userResponse = getUserResponse.getBody();
+        UserDto userResponse = getUserResponse.getBody();
         assertNotNull(userResponse);
         assertEquals(email, userResponse.getEmail());
     }
@@ -117,14 +117,14 @@ class UsersControllerTest {
             this.restTemplate.postForEntity("/users/update", entity, Void.class);
         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
-        ResponseEntity<UserResponseDto> getUserResponse =
+        ResponseEntity<UserDto> getUserResponse =
             this.restTemplate.exchange("/users/" + userId,
                                        HttpMethod.GET,
                                        new HttpEntity<>(headers),
-                                       UserResponseDto.class);
+                                       UserDto.class);
         assertEquals(HttpStatus.OK, getUserResponse.getStatusCode());
 
-        UserResponseDto userResponse = getUserResponse.getBody();
+        UserDto userResponse = getUserResponse.getBody();
         assertNotNull(userResponse);
         assertEquals("Updated Test User", userResponse.getName());
         assertEquals("Updated City", userResponse.getAddress().getCity());
@@ -234,11 +234,11 @@ class UsersControllerTest {
         HttpEntity<GetUsersRequestDto> requestEntity =
             new HttpEntity<>(getAllUsersRequest, headers);
 
-        ResponseEntity<UserResponseDto[]> response =
-            this.restTemplate.postForEntity("/users/users", requestEntity, UserResponseDto[].class);
+        ResponseEntity<UserDto[]> response =
+            this.restTemplate.postForEntity("/users/users", requestEntity, UserDto[].class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        UserResponseDto[] users = response.getBody();
+        UserDto[] users = response.getBody();
         assertNotNull(users);
         assertTrue(users.length >= 3);
     }

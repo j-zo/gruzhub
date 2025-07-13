@@ -11,37 +11,37 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.gruzhub.orders.auto.dto.AutoResponseDto;
+import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.orders.orders.dto.GetOrdersRequestDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
 
 public class OrdersDataTestHelper {
-    public static AutoResponseDto getOrderAuto(TestRestTemplate restTemplate,
-                                               String accessToken,
-                                               Long orderId,
-                                               Long autoId) {
+    public static TransportDto getOrderTransport(TestRestTemplate restTemplate,
+                                                 String accessToken,
+                                                 Long orderId,
+                                                 Long transportId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", accessToken);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<AutoResponseDto> response =
-            restTemplate.exchange("/orders/auto?orderId=" + orderId + "&autoId=" + autoId,
+        ResponseEntity<TransportDto> response =
+            restTemplate.exchange("/orders/transport?orderId=" + orderId + "&transportId=" + transportId,
                                   HttpMethod.GET,
                                   entity,
-                                  AutoResponseDto.class);
+                                  TransportDto.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         return response.getBody();
     }
 
     public static List<OrderResponseDto> getOrders(TestRestTemplate restTemplate,
-                                                   String accessToken,
                                                    List<OrderStatus> statuses) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        // TODO
+        //headers.set("Authorization", accessToken);
 
         GetOrdersRequestDto requestDto = new GetOrdersRequestDto();
         requestDto.setStatuses(statuses);

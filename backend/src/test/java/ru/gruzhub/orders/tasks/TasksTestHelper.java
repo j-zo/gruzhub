@@ -17,7 +17,7 @@ import ru.gruzhub.orders.tasks.dto.TaskResponseDto;
 import ru.gruzhub.orders.tasks.dto.UpdateTaskDto;
 
 public class TasksTestHelper {
-    public static CreateTaskDto createTaskSchema(Long orderId, Long autoId) {
+    public static CreateTaskDto createTaskSchema(Long orderId, Long transportId) {
         String name = "Task " + UUID.randomUUID().toString().substring(0, 8);
         String description = "Description " + UUID.randomUUID().toString().substring(0, 12);
         String price = String.format("%d.%02d",
@@ -25,7 +25,7 @@ public class TasksTestHelper {
                                      ThreadLocalRandom.current().nextInt(0, 100));
         return CreateTaskDto.builder()
                             .orderId(orderId)
-                            .autoId(autoId)
+                            .transportId(transportId)
                             .name(name)
                             .description(description)
                             .price(new BigDecimal(price))
@@ -44,11 +44,11 @@ public class TasksTestHelper {
                             .build();
     }
 
-    public static List<TaskResponseDto> getOrderAutoTasks(TestRestTemplate restTemplate,
+    public static List<TaskResponseDto> getOrderTransportTasks(TestRestTemplate restTemplate,
                                                           Long orderId,
-                                                          Long autoId,
+                                                          Long transportId,
                                                           String accessToken) {
-        String url = String.format("/tasks/order_auto_tasks?orderId=%d&autoId=%d", orderId, autoId);
+        String url = String.format("/tasks/order_transport_tasks?orderId=%d&transportId=%d", orderId, transportId);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", accessToken);
         HttpEntity<Void> entity = new HttpEntity<>(headers);

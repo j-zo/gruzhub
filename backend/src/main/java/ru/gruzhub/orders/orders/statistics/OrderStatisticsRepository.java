@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.gruzhub.orders.orders.models.Order;
+import ru.gruzhub.orders.orders.model.Order;
 
 @Repository
 public interface OrderStatisticsRepository extends JpaRepository<Order, Long> {

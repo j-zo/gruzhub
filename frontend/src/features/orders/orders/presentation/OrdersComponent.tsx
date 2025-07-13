@@ -9,13 +9,13 @@ import { CreateOrderComponent } from "./CreateOrderComponent";
 import { OrderComponent } from "./OrderComponent";
 import { User } from "../../../user/domain/User";
 import { UserRole } from "../../../user/domain/UserRole";
-import { TaskApiRepository } from "../../tasks/data/TaskApiRepository";
-import { AutoApiRepository } from "../../auto/auto/AutoApiRepository";
+import { TaskApiRepository } from "@/features/orders/tasks/data/TaskApiRepository";
+import { TransportApiRepository } from "@/features/common/transport/data/TransportApiRepository";
 import { OrderStatusNamer } from "../domain/OrderStatusNamer";
 import { OrderStatus } from "../domain/OrderStatus";
 import { useRegions } from "../../../regions/hooks/useRegions";
 import moment from "moment";
-import { AutoType } from "../../auto/domain/AutoType";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
 import { SidebarComponent } from "../../../../util/components/SidebarComponent";
 import { VisiblityDetectorComponent } from "../../../../util/components/visiblity/VisiblityDetectorComponent";
 import { OrdersChatComponent } from "../../messages/presentation/OrdersChatComponent";
@@ -28,7 +28,7 @@ interface Props {
   userApiRepository: UserApiRepository;
   orderApiRepository: OrderApiRepository;
   taskApiRepository: TaskApiRepository;
-  autoApiRepository: AutoApiRepository;
+  autoApiRepository: TransportApiRepository;
 }
 
 const ORDERS_FILTERING_REGIONS_KEY = "orders_filtering_regions_key";
@@ -451,11 +451,11 @@ export const OrdersComponent = ({
                           (order) => !order.declinedMastersIds.includes(user.id)
                         )
                         .map((order) => {
-                          const orderTruck = order.autos.find(
-                            (auto) => auto.type === AutoType.TRUCK
+                          const orderTruck = order.transports.find(
+                            (auto) => auto.type === TransportType.TRUCK
                           );
-                          const orderTrailer = order.autos.find(
-                            (auto) => auto.type === AutoType.TRAILER
+                          const orderTrailer = order.transports.find(
+                            (auto) => auto.type === TransportType.TRAILER
                           );
 
                           return (

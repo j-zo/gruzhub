@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class TaskResponseDto {
     private Long id;
-    private Long autoId;
+    private Long transportId;
     private Long orderId;
     private String name;
     private String description;

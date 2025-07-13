@@ -14,12 +14,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import ru.gruzhub.orders.auto.AutoRepository;
-import ru.gruzhub.orders.auto.dto.AutoResponseDto;
+import ru.gruzhub.transport.repository.TransportRepository;
+import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.orders.orders.OrdersWorkflowTestHelper;
 import ru.gruzhub.orders.orders.dto.AuthWithOrderDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
-import ru.gruzhub.orders.orders.repositories.OrderRepository;
+import ru.gruzhub.orders.orders.repository.OrderRepository;
 import ru.gruzhub.orders.tasks.dto.CreateTaskDto;
 import ru.gruzhub.orders.tasks.dto.TaskResponseDto;
 import ru.gruzhub.orders.tasks.dto.UpdateTaskDto;
@@ -38,7 +38,7 @@ public class TasksControllerTest {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
-    private AutoRepository autoRepository;
+    private TransportRepository transportRepository;
     @Autowired
     private TaskRepository taskRepository;
 
@@ -53,7 +53,7 @@ public class TasksControllerTest {
         CreateTaskDto createTask =
             TasksTestHelper.createTaskSchema(authWithOrder.getOrder().getId(),
                                              authWithOrder.getOrder()
-                                                          .getAutos()
+                                                          .getTransports()
                                                           .getFirst()
                                                           .getId());
 
@@ -71,8 +71,8 @@ public class TasksControllerTest {
         assertNotNull(createdTask);
         assertNotNull(createdTask.getId());
         assertEquals(authWithOrder.getOrder().getId(), createdTask.getOrderId());
-        assertEquals(authWithOrder.getOrder().getAutos().getFirst().getId(),
-                     createdTask.getAutoId());
+        assertEquals(authWithOrder.getOrder().getTransports().getFirst().getId(),
+                     createdTask.getTransportId());
         assertEquals(createTask.getName(), createdTask.getName());
         assertEquals(createTask.getDescription(), createdTask.getDescription());
         assertNotNull(createdTask.getPrice());
@@ -80,18 +80,18 @@ public class TasksControllerTest {
     }
 
     @Test
-    void testGetOrderAutoTasks() {
+    void testGetOrderTransportTasks() {
         AuthWithOrderDto authWithOrder =
             OrdersWorkflowTestHelper.createMasterWithOrderAndTakeIntoWork(this.restTemplate,
                                                                           this.usersService,
                                                                           this.userRepository);
 
         OrderResponseDto order = authWithOrder.getOrder();
-        AutoResponseDto auto = authWithOrder.getOrder().getAutos().getFirst();
+        TransportDto transport = authWithOrder.getOrder().getTransports().getFirst();
 
         // Create two tasks
-        CreateTaskDto task1 = TasksTestHelper.createTaskSchema(order.getId(), auto.getId());
-        CreateTaskDto task2 = TasksTestHelper.createTaskSchema(order.getId(), auto.getId());
+        CreateTaskDto task1 = TasksTestHelper.createTaskSchema(order.getId(), transport.getId());
+        CreateTaskDto task2 = TasksTestHelper.createTaskSchema(order.getId(), transport.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authWithOrder.getAuthData().getAccessToken());
@@ -112,10 +112,10 @@ public class TasksControllerTest {
 
         // Act: Retrieve tasks
         ResponseEntity<TaskResponseDto[]> response =
-            this.restTemplate.exchange("/tasks/order_auto_tasks?orderId=" +
+            this.restTemplate.exchange("/tasks/order_transport_tasks?orderId=" +
                                        order.getId() +
-                                       "&autoId=" +
-                                       auto.getId(),
+                                       "&transportId=" +
+                                       transport.getId(),
                                        HttpMethod.GET,
                                        new HttpEntity<>(headers),
                                        TaskResponseDto[].class);
@@ -135,9 +135,9 @@ public class TasksControllerTest {
                                                                           this.userRepository);
 
         OrderResponseDto order = authWithOrder.getOrder();
-        AutoResponseDto auto = authWithOrder.getOrder().getAutos().getFirst();
+        TransportDto transport = authWithOrder.getOrder().getTransports().getFirst();
 
-        CreateTaskDto createTask = TasksTestHelper.createTaskSchema(order.getId(), auto.getId());
+        CreateTaskDto createTask = TasksTestHelper.createTaskSchema(order.getId(), transport.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authWithOrder.getAuthData().getAccessToken());
@@ -167,10 +167,10 @@ public class TasksControllerTest {
 
         // Retrieve updated task
         ResponseEntity<TaskResponseDto[]> getResponse =
-            this.restTemplate.exchange("/tasks/order_auto_tasks?orderId=" +
+            this.restTemplate.exchange("/tasks/order_transport_tasks?orderId=" +
                                        order.getId() +
-                                       "&autoId=" +
-                                       auto.getId(),
+                                       "&transportId=" +
+                                       transport.getId(),
                                        HttpMethod.GET,
                                        new HttpEntity<>(headers),
                                        TaskResponseDto[].class);
@@ -194,9 +194,9 @@ public class TasksControllerTest {
                                                                           this.userRepository);
 
         OrderResponseDto order = authWithOrderDto.getOrder();
-        AutoResponseDto auto = order.getAutos().getFirst();
+        TransportDto transport = order.getTransports().getFirst();
 
-        CreateTaskDto createTask = TasksTestHelper.createTaskSchema(order.getId(), auto.getId());
+        CreateTaskDto createTask = TasksTestHelper.createTaskSchema(order.getId(), transport.getId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authWithOrderDto.getAuthData().getAccessToken());
@@ -221,10 +221,10 @@ public class TasksControllerTest {
 
         // Retrieve tasks to ensure deletion
         ResponseEntity<TaskResponseDto[]> getResponse =
-            this.restTemplate.exchange("/tasks/order_auto_tasks?orderId=" +
+            this.restTemplate.exchange("/tasks/order_transport_tasks?orderId=" +
                                        order.getId() +
-                                       "&autoId=" +
-                                       auto.getId(),
+                                       "&transportId=" +
+                                       transport.getId(),
                                        HttpMethod.GET,
                                        new HttpEntity<>(headers),
                                        TaskResponseDto[].class);

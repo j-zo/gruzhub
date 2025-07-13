@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.gruzhub.address.AddressesService;
-import ru.gruzhub.address.RegionsService;
+import ru.gruzhub.address.service.AddressesService;
+import ru.gruzhub.address.service.RegionsService;
 import ru.gruzhub.address.models.Address;
 import ru.gruzhub.address.models.Region;
 import ru.gruzhub.telegram.auth.TelegramOauthService;
@@ -30,7 +31,7 @@ import ru.gruzhub.users.dto.GetUsersRequestDto;
 import ru.gruzhub.users.dto.SignInUserRequestDto;
 import ru.gruzhub.users.dto.SignInUserResponseDto;
 import ru.gruzhub.users.dto.UpdateUserRequestDto;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;
 import ru.gruzhub.users.models.UserInfoChange;
@@ -244,7 +245,7 @@ public class UsersService {
         this.userRepository.save(user);
     }
 
-    public UserResponseDto getUserByIdWithAuth(Long userId) {
+    public UserDto getUserByIdWithAuth(Long userId) {
         User authorizedUser = this.getCurrentUser();
         User user = this.userRepository.findById(userId)
                                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -254,11 +255,11 @@ public class UsersService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        return new UserResponseDto(user);
+        return new UserDto(user);
     }
 
-    public User getUserById(Long userId) {
-        return this.userRepository.findById(userId).orElseThrow();
+    public Optional<User> getUserById(Long userId) {
+        return this.userRepository.findById(userId);
     }
 
     public User getUserByEmail(String email, UserRole role) {
@@ -435,8 +436,8 @@ public class UsersService {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public List<UserResponseDto> getUsers(String authorization,
-                                          GetUsersRequestDto getUsersRequest) {
+    public List<UserDto> getUsers(String authorization,
+                                  GetUsersRequestDto getUsersRequest) {
         User authorizedUser = this.getUserModelFromToken(authorization);
         if (authorizedUser.getRole() != UserRole.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -459,16 +460,16 @@ public class UsersService {
             users = this.userRepository.findAllUsers();
         }
 
-        return users.stream().map(UserResponseDto::new).collect(Collectors.toList());
+        return users.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
     public List<UserInfoChange> getUserInfoChanges(Long userId) {
         return this.userInfoChangeRepository.findByUserIdOrderByIdDesc(userId);
     }
 
-    public List<UserResponseDto> getUsersByIds(List<Long> userIds) {
+    public List<UserDto> getUsersByIds(List<Long> userIds) {
         List<User> users = this.userRepository.findByIdIn(userIds);
-        return users.stream().map(UserResponseDto::new).collect(Collectors.toList());
+        return users.stream().map(UserDto::new).collect(Collectors.toList());
     }
 
     public void createAdminUserIfNotExist(String adminEmail, String adminName, String adminPhone) {

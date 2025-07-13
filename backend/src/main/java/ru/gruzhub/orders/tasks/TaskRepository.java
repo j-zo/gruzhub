@@ -9,14 +9,14 @@ import ru.gruzhub.orders.tasks.models.Task;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
     /**
-     * Finds tasks by order ID and auto ID, sorted as specified.
+     * Finds tasks by order ID and transport ID, sorted as specified.
      *
      * @param orderId the ID of the order
-     * @param autoId  the ID of the auto
+     * @param transportId  the ID of the transport
      * @param sort    the sorting criteria
      * @return a list of matching Task entities
      */
-    List<Task> findByOrderIdAndAutoId(Long orderId, Long autoId, Sort sort);
+    List<Task> findByOrderIdAndTransportId(Long orderId, Long transportId, Sort sort);
 
     /**
      * Finds tasks by order ID, sorted as specified.

@@ -14,12 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.gruzhub.orders.auto.enums.AutoType;
+import ru.gruzhub.transport.dto.TransportDto;
+import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.orders.orders.dto.AuthWithOrderDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderRequestDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderResponseDto;
 import ru.gruzhub.orders.orders.dto.DeclineOrderRequestDto;
-import ru.gruzhub.orders.orders.dto.OrderAutoDto;
+import ru.gruzhub.orders.orders.dto.OrderTransportDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.dto.OrderStatusChangeDto;
 import ru.gruzhub.orders.orders.dto.OrderWithUsersDto;
@@ -79,17 +80,17 @@ public class OrdersWorkflowTestHelper {
     public static CreateOrderResponseDto createOrder(TestRestTemplate restTemplate,
                                                      String accessToken,
                                                      CreateOrderRequestDto orderRequest,
-                                                     List<OrderAutoDto> autos) {
-        return createOrder(restTemplate, null, accessToken, orderRequest, autos);
+                                                     List<OrderTransportDto> transportDtos) {
+        return createOrder(restTemplate, null, accessToken, orderRequest, transportDtos);
     }
 
     public static CreateOrderResponseDto createOrder(TestRestTemplate restTemplate,
                                                      Long regionId,
                                                      String accessToken,
                                                      CreateOrderRequestDto orderRequest,
-                                                     List<OrderAutoDto> autos) {
+                                                     List<OrderTransportDto> transportDtos) {
         if (orderRequest == null) {
-            orderRequest = createOrderRequest(autos, regionId);
+            orderRequest = createOrderRequest(transportDtos, regionId);
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -110,15 +111,15 @@ public class OrdersWorkflowTestHelper {
         return createOrderRequest(null);
     }
 
-    public static CreateOrderRequestDto createOrderRequest(List<OrderAutoDto> autos) {
-        return createOrderRequest(autos, null);
+    public static CreateOrderRequestDto createOrderRequest(List<OrderTransportDto> transportDtos) {
+        return createOrderRequest(transportDtos, null);
     }
 
-    public static CreateOrderRequestDto createOrderRequest(List<OrderAutoDto> autos,
+    public static CreateOrderRequestDto createOrderRequest(List<OrderTransportDto> transportDtos,
                                                            Long regionId) {
-        if (autos == null) {
-            autos =
-                Arrays.asList(createOrderAuto(AutoType.TRAILER), createOrderAuto(AutoType.TRUCK));
+        if (transportDtos == null) {
+            transportDtos =
+                Arrays.asList(createOrderTransport(TransportType.TRAILER), createOrderTransport(TransportType.TRUCK));
         }
 
         if (regionId == null) {
@@ -132,7 +133,7 @@ public class OrdersWorkflowTestHelper {
         request.setDriverEmail("email" + UUID.randomUUID() + "@example.com");
         request.setCity("City " + UUID.randomUUID());
         request.setStreet("Street " + UUID.randomUUID());
-        request.setAutos(autos);
+        request.setTransport(transportDtos);
         request.setRegionId(regionId);
         request.setDescription("Description " + UUID.randomUUID());
         request.setNotes("Notes " + UUID.randomUUID());
@@ -142,21 +143,21 @@ public class OrdersWorkflowTestHelper {
         return request;
     }
 
-    public static OrderAutoDto createOrderAuto(AutoType type) {
-        OrderAutoDto auto = new OrderAutoDto();
-        auto.setBrand("Brand " + UUID.randomUUID().toString().substring(0, 5));
-        auto.setModel("Model " + UUID.randomUUID().toString().substring(0, 5));
-        auto.setVin("VIN" + UUID.randomUUID().toString().substring(0, 8));
-        auto.setNumber("Number " + UUID.randomUUID().toString().substring(0, 5));
-        auto.setType(type);
-        return auto;
+    public static TransportDto createOrderTransport(TransportType type) {
+        TransportDto transportDto = new TransportDto();
+        transportDto.setBrand("Brand " + UUID.randomUUID().toString().substring(0, 5));
+        transportDto.setModel("Model " + UUID.randomUUID().toString().substring(0, 5));
+        transportDto.setVin("VIN" + UUID.randomUUID().toString().substring(0, 8));
+        transportDto.setNumber("Number " + UUID.randomUUID().toString().substring(0, 5));
+        transportDto.setType(type);
+        return transportDto;
     }
 
     public static OrderResponseDto getOrder(TestRestTemplate restTemplate,
-                                            Long orderId,
-                                            String accessToken) {
+                                            Long orderId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        // TODO
+      //  headers.set("Authorization", accessToken);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<OrderResponseDto> response = restTemplate.exchange("/orders/" + orderId,
@@ -219,10 +220,10 @@ public class OrdersWorkflowTestHelper {
     }
 
     public static List<OrderStatusChangeDto> getOrderStatusChanges(TestRestTemplate restTemplate,
-                                                                   Long orderId,
-                                                                   String accessToken) {
+                                                                   Long orderId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        //TODO adjust tests
+        // headers.set("Authorization", accessToken);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<OrderStatusChangeDto[]> response = restTemplate.exchange(

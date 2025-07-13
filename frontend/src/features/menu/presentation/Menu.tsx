@@ -19,6 +19,8 @@ interface Props {
 
 const tabs: MenuTab[] = [
   { name: "Заказы", url: "/", isAdminOnly: false },
+  { name: "Транспорт", url: "/transport", isAdminOnly: false },
+  { name: "Запчасти", url: "/spareParts", isAdminOnly: false },
   { name: "Профиль", url: "/profile", isAdminOnly: false },
   { name: "Пользователи", url: "/users", isAdminOnly: true },
   { name: "Статистика", url: "/statistics", isAdminOnly: true },

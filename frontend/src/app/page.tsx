@@ -6,8 +6,8 @@ import { OrderApiRepository } from "../features/orders/orders/data/OrderApiRepos
 import UserApiRepository from "../features/user/data/UserApiRepository";
 import ApiHelper from "../util/api/ApiHelper";
 import { OrdersComponent } from "../features/orders/orders/presentation/OrdersComponent";
-import { TaskApiRepository } from "../features/orders/tasks/data/TaskApiRepository";
-import { AutoApiRepository } from "../features/orders/auto/auto/AutoApiRepository";
+import { TaskApiRepository } from "@/features/orders/tasks/data/TaskApiRepository";
+import { TransportApiRepository } from "@/features/common/transport/data/TransportApiRepository";
 import { OrderMessageApiRepository } from "../features/orders/messages/data/OrderMessageApiRepository";
 
 const apiHelper = new ApiHelper();
@@ -19,7 +19,7 @@ const userApiRepository = new UserApiRepository(
 apiHelper.attachUserRepository(userApiRepository);
 const orderApiRepository = new OrderApiRepository(apiHelper, userApiRepository);
 const taskApiRepository = new TaskApiRepository(apiHelper, userApiRepository);
-const autoApiRepository = new AutoApiRepository(apiHelper, userApiRepository);
+const autoApiRepository = new TransportApiRepository(apiHelper, userApiRepository);
 const orderMessageApiRepository = new OrderMessageApiRepository(
   apiHelper,
   userApiRepository

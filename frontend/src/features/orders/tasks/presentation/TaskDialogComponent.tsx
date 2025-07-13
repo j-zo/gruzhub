@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { TaskApiRepository } from "../data/TaskApiRepository";
+import { TaskApiRepository } from "@/features/orders/tasks/data/TaskApiRepository";
 import { Order } from "../../orders/domain/Order";
 import { Button, Modal, TextInput, Textarea } from "@mantine/core";
-import { AutoType } from "../../auto/domain/AutoType";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
 import { Task } from "../domain/Task";
 
 interface Props {
@@ -24,7 +24,7 @@ export const TaskDialogComponent = ({
 }: Props): JSX.Element => {
   const [isSaving, setSaving] = useState(false);
 
-  const [autoId, setAutoId] = useState(task?.autoId || order.autos[0].id);
+  const [transportId, setTransportId] = useState(task?.transportId || order.transports[0].id);
   const [name, setName] = useState(task?.name || "");
   const [description, setDescription] = useState(task?.description || "");
   const [price, setPrice] = useState(task?.price ? Number(task.price) : 0 || 0);
@@ -46,7 +46,7 @@ export const TaskDialogComponent = ({
         description: description,
         price: `${price}`,
         orderId: order.id,
-        autoId: autoId,
+        transportId: transportId,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
@@ -83,13 +83,13 @@ export const TaskDialogComponent = ({
 
         <select
           className="form-control mt-1"
-          value={autoId}
-          onChange={(e) => setAutoId(Number(e.target.value))}
+          value={transportId}
+          onChange={(e) => setTransportId(Number(e.target.value))}
         >
-          {order.autos.map((auto) => (
-            <option key={`auto_option_${auto.id}`} value={auto.id}>{`${
-              auto.type === AutoType.TRUCK ? "Грузовик" : "Прицеп"
-            }: ${auto.model ? `${auto.brand} ` : ``}${auto.model}`}</option>
+          {order.transports.map((transport) => (
+            <option key={`auto_option_${transport.id}`} value={transport.id}>{`${
+                transport.type === TransportType.TRUCK ? "Грузовик" : "Прицеп"
+            }: ${transport.model ? `${transport.brand} ` : ``}${transport.model}`}</option>
           ))}
         </select>
       </div>

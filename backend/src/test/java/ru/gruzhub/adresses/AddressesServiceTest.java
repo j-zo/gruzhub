@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import ru.gruzhub.address.AddressesService;
-import ru.gruzhub.address.RegionsService;
+import ru.gruzhub.address.service.AddressesService;
+import ru.gruzhub.address.service.RegionsService;
 import ru.gruzhub.address.models.Address;
 import ru.gruzhub.address.models.Region;
 

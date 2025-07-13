@@ -22,14 +22,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import ru.gruzhub.orders.auto.dto.AutoResponseDto;
+import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderRequestDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderResponseDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.dto.OrderStatusChangeDto;
-import ru.gruzhub.orders.orders.dto.UpdateOrderAutoRequestDto;
+import ru.gruzhub.orders.orders.dto.UpdateOrderTransportRequestDto;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
-import ru.gruzhub.orders.orders.services.OrdersWorkflowService;
+import ru.gruzhub.orders.orders.service.OrdersWorkflowService;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.testing.UserTestingHelper;
 import ru.gruzhub.users.testing.dto.TestAuthDataDto;
@@ -73,9 +73,7 @@ public class OrdersDataControllerTest {
                                              null);
 
         // Get orders
-        assertNotNull(order1BySameDriver.getAccessToken());
         List<OrderResponseDto> orders = OrdersDataTestHelper.getOrders(this.restTemplate,
-                                                                       order1BySameDriver.getAccessToken(),
                                                                        null);
 
         // Check orders
@@ -89,12 +87,10 @@ public class OrdersDataControllerTest {
     void testGetOrderStatusChanges() {
         CreateOrderResponseDto orderResponse =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, null);
-        assertNotNull(orderResponse.getAccessToken());
 
         List<OrderStatusChangeDto> statusChanges = OrdersWorkflowTestHelper.getOrderStatusChanges(
             this.restTemplate,
-            orderResponse.getOrderId(),
-            orderResponse.getAccessToken());
+            orderResponse.getOrderId());
 
         assertEquals(1, statusChanges.size());
     }
@@ -119,7 +115,6 @@ public class OrdersDataControllerTest {
         }
 
         List<OrderResponseDto> orders = OrdersDataTestHelper.getOrders(this.restTemplate,
-                                                                       customerAuthData.getAccessToken(),
                                                                        Collections.singletonList(
                                                                            orderStatus));
 
@@ -142,7 +137,6 @@ public class OrdersDataControllerTest {
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, regionId, null, null, null);
 
         List<OrderResponseDto> orders = OrdersDataTestHelper.getOrders(this.restTemplate,
-                                                                       masterAuthData.getAccessToken(),
                                                                        null);
 
         List<Long> ordersIds = new ArrayList<>();
@@ -154,23 +148,23 @@ public class OrdersDataControllerTest {
     }
 
     @Test
-    void testGetAutoOrders() {
+    void testGetTransportOrders() {
         CreateOrderRequestDto orderToCreate = OrdersWorkflowTestHelper.createOrderRequest();
         CreateOrderResponseDto createResponse =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, orderToCreate, null);
-        assertNotNull(createResponse.getAccessToken());
+        assertNotNull(createResponse);
 
         OrderResponseDto orderResponse = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                           createResponse.getOrderId(),
-                                                                           createResponse.getAccessToken());
-        Long autoId = orderResponse.getAutos().getFirst().getId();
+                                                                           createResponse.getOrderId());
+        Long transportId = orderResponse.getTransports().getFirst().getId();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", createResponse.getAccessToken());
+       // TODO
+        // headers.set("Authorization", createResponse.getAccessToken());
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
         ResponseEntity<OrderResponseDto[]> response =
-            this.restTemplate.exchange("/orders/auto/" + autoId,
+            this.restTemplate.exchange("/orders/transport/" + transportId,
                                        HttpMethod.GET,
                                        entity,
                                        OrderResponseDto[].class);
@@ -180,7 +174,7 @@ public class OrdersDataControllerTest {
     }
 
     @Test
-    void testGetOrderAuto() {
+    void testGetOrderTransport() {
         TestAuthDataDto authData = this.userTestingHelper.signUp(UserRole.CUSTOMER);
         CreateOrderResponseDto createdOrder =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate,
@@ -189,23 +183,22 @@ public class OrdersDataControllerTest {
                                                  null);
 
         OrderResponseDto order = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                   createdOrder.getOrderId(),
-                                                                   authData.getAccessToken());
-        AutoResponseDto createdOrderAuto = order.getAutos().getFirst();
+                                                                   createdOrder.getOrderId());
+        TransportDto createdOrderTransport = order.getTransports().getFirst();
 
-        AutoResponseDto auto = OrdersDataTestHelper.getOrderAuto(this.restTemplate,
+        TransportDto transport = OrdersDataTestHelper.getOrderTransport(this.restTemplate,
                                                                  authData.getAccessToken(),
                                                                  createdOrder.getOrderId(),
-                                                                 createdOrderAuto.getId());
+                createdOrderTransport.getId());
 
-        assertEquals(createdOrderAuto.getBrand(), auto.getBrand());
-        assertEquals(createdOrderAuto.getModel(), auto.getModel());
-        assertEquals(createdOrderAuto.getVin(), auto.getVin());
-        assertEquals(createdOrderAuto.getNumber(), auto.getNumber());
+        assertEquals(createdOrderTransport.getBrand(), transport.getBrand());
+        assertEquals(createdOrderTransport.getModel(), transport.getModel());
+        assertEquals(createdOrderTransport.getVin(), transport.getVin());
+        assertEquals(createdOrderTransport.getNumber(), transport.getNumber());
     }
 
     @Test
-    void testUpdateOrderAuto() {
+    void testUpdateOrderTransport() {
         TestAuthDataDto authData = this.userTestingHelper.signUp(UserRole.CUSTOMER);
         CreateOrderResponseDto createdOrder =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate,
@@ -216,34 +209,34 @@ public class OrdersDataControllerTest {
         OrderResponseDto order = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
                                                                    createdOrder.getOrderId(),
                                                                    authData.getAccessToken());
-        AutoResponseDto createdOrderAuto = order.getAutos().getFirst();
+        TransportDto createdOrderTransport = order.getTransports().getFirst();
 
-        UpdateOrderAutoRequestDto autoToUpdate = new UpdateOrderAutoRequestDto();
-        autoToUpdate.setOrderId(order.getId());
-        autoToUpdate.setAutoId(createdOrderAuto.getId());
-        autoToUpdate.setBrand(UUID.randomUUID().toString());
-        autoToUpdate.setModel(UUID.randomUUID().toString());
-        autoToUpdate.setVin(UUID.randomUUID().toString());
-        autoToUpdate.setNumber(UUID.randomUUID().toString());
+        UpdateOrderTransportRequestDto transportToUpdate = new UpdateOrderTransportRequestDto();
+        transportToUpdate.setOrderId(order.getId());
+        transportToUpdate.setTransportId(createdOrderTransport.getId());
+        transportToUpdate.setBrand(UUID.randomUUID().toString());
+        transportToUpdate.setModel(UUID.randomUUID().toString());
+        transportToUpdate.setVin(UUID.randomUUID().toString());
+        transportToUpdate.setNumber(UUID.randomUUID().toString());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", authData.getAccessToken());
-        HttpEntity<UpdateOrderAutoRequestDto> requestEntity =
-            new HttpEntity<>(autoToUpdate, headers);
+        HttpEntity<UpdateOrderTransportRequestDto> requestEntity =
+            new HttpEntity<>(transportToUpdate, headers);
 
         ResponseEntity<Void> response =
-            this.restTemplate.postForEntity("/orders/auto", requestEntity, Void.class);
+            this.restTemplate.postForEntity("/orders/transport", requestEntity, Void.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        AutoResponseDto updatedAuto = OrdersDataTestHelper.getOrderAuto(this.restTemplate,
+        TransportDto updatedTransport = OrdersDataTestHelper.getOrderTransport(this.restTemplate,
                                                                         authData.getAccessToken(),
                                                                         createdOrder.getOrderId(),
-                                                                        createdOrderAuto.getId());
+                                                                        createdOrderTransport.getId());
 
-        assertEquals(autoToUpdate.getBrand(), updatedAuto.getBrand());
-        assertEquals(autoToUpdate.getModel(), updatedAuto.getModel());
-        assertEquals(autoToUpdate.getVin(), updatedAuto.getVin());
-        assertEquals(autoToUpdate.getNumber(), updatedAuto.getNumber());
+        assertEquals(transportToUpdate.getBrand(), updatedTransport.getBrand());
+        assertEquals(transportToUpdate.getModel(), updatedTransport.getModel());
+        assertEquals(transportToUpdate.getVin(), updatedTransport.getVin());
+        assertEquals(transportToUpdate.getNumber(), updatedTransport.getNumber());
     }
 }

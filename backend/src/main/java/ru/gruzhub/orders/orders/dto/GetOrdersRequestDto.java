@@ -10,7 +10,7 @@ public class GetOrdersRequestDto {
     private Long masterId;
     private Long customerId;
     private Long driverId;
-    private Long autoId;
+    private Long transportId;
     private List<Long> regionsIds;
     private Long userId;
     private Integer limit;

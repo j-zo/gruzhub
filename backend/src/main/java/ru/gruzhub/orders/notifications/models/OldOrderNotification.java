@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.gruzhub.orders.orders.models.Order;
+import ru.gruzhub.orders.orders.model.Order;
 
 @Entity
 @Table(name = "orders_notifications")

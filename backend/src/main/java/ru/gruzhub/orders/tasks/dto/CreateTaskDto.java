@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class CreateTaskDto {
-    private Long autoId;
+    private Long transportId;
     private Long orderId;
     private String name;
     private String description;

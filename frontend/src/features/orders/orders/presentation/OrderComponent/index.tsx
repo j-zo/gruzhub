@@ -6,15 +6,15 @@ import { useEffect, useState } from "react";
 import { Order } from "../../domain/Order";
 import LoadingComponent from "../../../../../util/components/LoadingComponent";
 import { OrderStatusNamer } from "../../domain/OrderStatusNamer";
-import { AutoType } from "../../../auto/domain/AutoType";
+import { TransportType } from "@/features/common/transport/domain/TransportType";
 import { User } from "../../../../user/domain/User";
 import UserApiRepository from "../../../../user/data/UserApiRepository";
 import { UserRole } from "../../../../user/domain/UserRole";
 import { OrderStatus } from "../../domain/OrderStatus";
 import { OrderTasksComponent } from "../../../tasks/presentation/OrderTasksComponent";
-import { TaskApiRepository } from "../../../tasks/data/TaskApiRepository";
-import { OrderAutoComponent } from "../../../auto/presentation/OrderAutoComponent";
-import { AutoApiRepository } from "../../../auto/auto/AutoApiRepository";
+import { TaskApiRepository } from "@/features/orders/tasks/data/TaskApiRepository";
+import { OrderTransportComponent } from "@/features/common/transport/presentation/OrderTransportComponent";
+import { TransportApiRepository } from "@/features/common/transport/data/TransportApiRepository";
 import { ConfirmationComponent } from "../../../../../util/components/ConfirmationComponent";
 import { UserDetailsComponent } from "./UserDetailsComponent";
 import { OrderTimelineComponent } from "./OrderTimelineComponent";
@@ -32,7 +32,7 @@ interface Props {
   orderApiRepository: OrderApiRepository;
   userApiRepository: UserApiRepository;
   taskApiRepository: TaskApiRepository;
-  autoApiRepository: AutoApiRepository;
+  transportApiRepository: TransportApiRepository;
 
   orderId: number;
 
@@ -46,8 +46,7 @@ export const OrderComponent = ({
   orderMessageApiRepository,
   orderApiRepository,
   userApiRepository,
-  taskApiRepository,
-  autoApiRepository,
+  taskApiRepository, transportApiRepository,
 
   orderId,
 
@@ -210,9 +209,9 @@ export const OrderComponent = ({
   }, [orderId]);
 
   if (order) {
-    order.autos.sort((a1, a2) => {
-      if (a1.type === AutoType.TRUCK && a2.type === AutoType.TRUCK) return 1;
-      if (a1.type === AutoType.TRUCK && a2.type === AutoType.TRAILER) return -1;
+    order.transports.sort((a1, a2) => {
+      if (a1.type === TransportType.TRUCK && a2.type === TransportType.TRUCK) return 1;
+      if (a1.type === TransportType.TRUCK && a2.type === TransportType.TRAILER) return -1;
       return 0;
     });
   }
@@ -545,21 +544,21 @@ export const OrderComponent = ({
                     <div className="w-full lg:w-2/4 pr-10">
                       <div className="mt-5 lg:mt-0" />
 
-                      <OrderAutoComponent
-                        autoApiRepository={autoApiRepository}
+                      <OrderTransportComponent
+                        transportApiRepository={transportApiRepository}
                         order={order}
-                        autoId={order.autos[0].id}
+                        transportId={order.transports[0].id}
                         user={user}
                       />
 
-                      {order.autos.length === 2 && (
+                      {order.transports.length === 2 && (
                         <>
                           <div className="mt-5" />
 
-                          <OrderAutoComponent
-                            autoApiRepository={autoApiRepository}
+                          <OrderTransportComponent
+                              transportApiRepository={transportApiRepository}
                             order={order}
-                            autoId={order.autos[1].id}
+                            transportId={order.transports[1].id}
                             user={user}
                           />
                         </>

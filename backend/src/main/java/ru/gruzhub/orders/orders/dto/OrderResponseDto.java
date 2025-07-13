@@ -6,11 +6,11 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.gruzhub.address.models.Address;
-import ru.gruzhub.orders.auto.dto.AutoResponseDto;
-import ru.gruzhub.orders.auto.models.Auto;
+import ru.gruzhub.transport.dto.TransportDto;
+import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
-import ru.gruzhub.orders.orders.models.Order;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.orders.orders.model.Order;
+import ru.gruzhub.users.dto.UserDto;
 
 @Data
 @NoArgsConstructor
@@ -18,12 +18,12 @@ public class OrderResponseDto {
     private Long id;
     private String guaranteeUuid;
     private Long customerId;
-    private UserResponseDto customer;
+    private UserDto customer;
     private Long masterId;
-    private UserResponseDto master;
+    private UserDto master;
     private Long driverId;
-    private UserResponseDto driver;
-    private List<AutoResponseDto> autos;
+    private UserDto driver;
+    private List<TransportDto> transports;
     private String description;
     private String notes;
     private Long createdAt;
@@ -44,22 +44,22 @@ public class OrderResponseDto {
 
         if (order.getCustomer() != null) {
             this.customerId = order.getCustomer().getId();
-            this.customer = new UserResponseDto(order.getCustomer());
+            this.customer = new UserDto(order.getCustomer());
         }
 
         if (order.getMaster() != null) {
             this.masterId = order.getMaster().getId();
-            this.master = order.getMaster() != null ? new UserResponseDto(order.getMaster()) : null;
+            this.master = order.getMaster() != null ? new UserDto(order.getMaster()) : null;
         }
 
         if (order.getDriver() != null) {
             this.driverId = order.getDriver().getId();
-            this.driver = order.getDriver() != null ? new UserResponseDto(order.getDriver()) : null;
+            this.driver = order.getDriver() != null ? new UserDto(order.getDriver()) : null;
         }
 
-        this.autos = new ArrayList<>();
-        for (Auto auto : order.getAutos()) {
-            this.autos.add(new AutoResponseDto(auto));
+        this.transports = new ArrayList<>();
+        for (Transport transport : order.getTransport()) {
+            this.transports.add(new TransportDto(transport));
         }
 
         this.description = order.getDescription();

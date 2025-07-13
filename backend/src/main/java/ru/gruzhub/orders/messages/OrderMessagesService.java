@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.gruzhub.orders.messages.dto.OrderMessageDto;
 import ru.gruzhub.orders.messages.models.OrderMessage;
-import ru.gruzhub.orders.orders.models.Order;
-import ru.gruzhub.orders.orders.services.OrdersDataService;
+import ru.gruzhub.orders.orders.model.Order;
+import ru.gruzhub.orders.orders.service.OrdersDataService;
 import ru.gruzhub.tools.files.FilesService;
 import ru.gruzhub.tools.files.models.File;
 import ru.gruzhub.users.UsersService;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;
 
@@ -87,7 +87,7 @@ public class OrderMessagesService {
         return messages.stream().map(OrderMessageDto::new).collect(Collectors.toList());
     }
 
-    public List<UserResponseDto> getOrderMessagesUsers(User user, Long orderId) {
+    public List<UserDto> getOrderMessagesUsers(User user, Long orderId) {
         Order order = this.ordersDataService.getOrderById(user, orderId);
 
         this.validateMessagesAuthority(user, order);

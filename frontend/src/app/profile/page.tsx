@@ -58,17 +58,17 @@ export default function Page() {
 
   const [creatingChatCode, setCreatingChatCode] = useState<string>("");
 
-  const [autos, setAutos] = useState<File | null>(null);
-  const [autosLoading, setAutosLoading] = useState(false);
+  const [transports, setTransports] = useState<File | null>(null);
+  const [transportsLoading, setTransportsLoading] = useState(false);
 
   const updateUser = (user: User) => {
     setUser(JSON.parse(JSON.stringify(user)));
     setUnsaved(true);
   };
 
-  const uploadAutos = async (selectedFile: File | null) => {
+  const uploadTransports = async (selectedFile: File | null) => {
     if (!selectedFile) return;
-    setAutosLoading(true);
+    setTransportsLoading(true);
 
     try {
       const formData = new FormData();
@@ -92,7 +92,7 @@ export default function Page() {
       console.error("Upload error:", error);
       alert("Не удалось загрузить файл.");
     } finally {
-      setAutosLoading(false);
+      setTransportsLoading(false);
     }
   };
 
@@ -496,11 +496,11 @@ export default function Page() {
             {user.role == UserRole.CUSTOMER && (
                 <div className="mt-7">
                   <Group>
-                    <FileButton onChange={uploadAutos} accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    <FileButton onChange={uploadTransports} accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
                       {(props) => <Button {...props}>Загрузить список транспорта</Button>}
                     </FileButton>
 
-                    {autosLoading && (
+                    {transportsLoading && (
                         <>
                           <LoadingComponent />
                         </>

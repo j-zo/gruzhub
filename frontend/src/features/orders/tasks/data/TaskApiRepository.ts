@@ -40,10 +40,10 @@ export class TaskApiRepository {
     );
   }
 
-  async getTasks(orderId: number, autoId?: number): Promise<Task[]> {
+  async getTasks(orderId: number, transportId?: number): Promise<Task[]> {
     return this.apiHelper.fetchGetJson(
-      `${APPLICATION_SERVER}/api/tasks/order_auto_tasks?orderId=${orderId}${
-        autoId ? `&autoId=${autoId}` : ""
+      `${APPLICATION_SERVER}/api/tasks/order_transport_tasks?orderId=${orderId}${
+          transportId ? `&transportId=${transportId}` : ""
       }`,
         this.userApiRepository
     );

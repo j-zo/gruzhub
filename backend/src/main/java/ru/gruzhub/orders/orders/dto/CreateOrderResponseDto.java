@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class CreateOrderResponseDto {
     private Long orderId;
     private Long driverId;
-    private String accessToken;
 }

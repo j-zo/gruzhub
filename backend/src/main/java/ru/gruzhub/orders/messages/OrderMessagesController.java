@@ -3,23 +3,18 @@ package ru.gruzhub.orders.messages;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.gruzhub.orders.messages.dto.GetLastMessagePerOrderRequestDto;
 import ru.gruzhub.orders.messages.dto.OrderMessageDto;
 import ru.gruzhub.orders.messages.dto.SendMessageRequestDto;
 import ru.gruzhub.users.UsersService;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 import ru.gruzhub.users.models.User;
 
 @RestController
 @RequestMapping("/orders/messages")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class OrderMessagesController {
     private final OrderMessagesService messagesService;
@@ -82,7 +77,7 @@ public class OrderMessagesController {
     }
 
     @GetMapping("/get-order-messages-users/{orderId}")
-    public List<UserResponseDto> getOrderMessagesUsers(
+    public List<UserDto> getOrderMessagesUsers(
         @PathVariable Long orderId) {
         User user = this.usersService.getCurrentUser();
         return this.messagesService.getOrderMessagesUsers(user, orderId);

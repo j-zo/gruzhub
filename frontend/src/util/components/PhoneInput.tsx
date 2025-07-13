@@ -4,7 +4,7 @@ import StringUtils from "../StringUtils";
 
 export type PhoneInputProps = {
   phone?: string;
-  label: string;
+  label?: string;
   error?: ReactNode;
   onChange: (phone: string) => void;
   required?: boolean;
@@ -14,7 +14,7 @@ export type PhoneInputProps = {
 export function PhoneInput(props: PhoneInputProps) {
   return (
     <TextInput
-      label="Номер телефона"
+      label={props.label}
       placeholder="+7 (XXX) XXX-XX-XX"
       value={StringUtils.formatAsPhone(props.phone || "")}
       error={props.error}

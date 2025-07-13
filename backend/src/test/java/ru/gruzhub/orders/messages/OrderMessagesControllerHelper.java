@@ -17,7 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import ru.gruzhub.orders.messages.dto.OrderMessageDto;
 import ru.gruzhub.orders.messages.dto.SendMessageRequestDto;
-import ru.gruzhub.users.dto.UserResponseDto;
+import ru.gruzhub.users.dto.UserDto;
 
 public class OrderMessagesControllerHelper {
     public static SendMessageRequestDto sendMessage(TestRestTemplate restTemplate,
@@ -83,19 +83,19 @@ public class OrderMessagesControllerHelper {
         return Arrays.asList(Objects.requireNonNull(response.getBody()));
     }
 
-    public static List<UserResponseDto> getOrderMessagesUsers(TestRestTemplate restTemplate,
-                                                              Long orderId,
-                                                              String accessToken) {
+    public static List<UserDto> getOrderMessagesUsers(TestRestTemplate restTemplate,
+                                                      Long orderId,
+                                                      String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", accessToken);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        ResponseEntity<UserResponseDto[]> response = restTemplate.exchange(
+        ResponseEntity<UserDto[]> response = restTemplate.exchange(
             "/orders/messages/get-order-messages-users/" + orderId,
             HttpMethod.GET,
             request,
-            UserResponseDto[].class);
+            UserDto[].class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
