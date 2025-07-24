@@ -384,9 +384,12 @@ public class UsersService {
     }
 
     public SignInUserResponseDto getUserAccessNoAuth(Long userId) {
-        User user = this.getUserById(userId);
-        String accessToken = this.generateAccessToken(user);
-        return new SignInUserResponseDto(user.getId(), accessToken);
+        Optional<User> user = this.getUserById(userId);
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, String.format("Cannot find user with the id %s", userId));
+        }
+        String accessToken = this.generateAccessToken(user.get());
+        return new SignInUserResponseDto(user.get().getId(), accessToken);
     }
 
     public String generateAccessToken(User user) {

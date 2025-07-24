@@ -3,9 +3,13 @@ package ru.gruzhub.orders.orders.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.gruzhub.address.models.Address;
+import ru.gruzhub.driver.model.Driver;
+import ru.gruzhub.transport.dto.DriverDto;
 import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
@@ -21,8 +25,8 @@ public class OrderResponseDto {
     private UserDto customer;
     private Long masterId;
     private UserDto master;
-    private Long driverId;
-    private UserDto driver;
+    private UUID driverId;
+    private DriverDto driver;
     private List<TransportDto> transports;
     private String description;
     private String notes;
@@ -54,7 +58,7 @@ public class OrderResponseDto {
 
         if (order.getDriver() != null) {
             this.driverId = order.getDriver().getId();
-            this.driver = order.getDriver() != null ? new UserDto(order.getDriver()) : null;
+            this.driver = order.getDriver() != null ? new DriverDto(order.getDriver()) : null;
         }
 
         this.transports = new ArrayList<>();

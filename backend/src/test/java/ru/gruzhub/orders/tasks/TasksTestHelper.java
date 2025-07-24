@@ -17,7 +17,7 @@ import ru.gruzhub.orders.tasks.dto.TaskResponseDto;
 import ru.gruzhub.orders.tasks.dto.UpdateTaskDto;
 
 public class TasksTestHelper {
-    public static CreateTaskDto createTaskSchema(Long orderId, Long transportId) {
+    public static CreateTaskDto createTaskSchema(Long orderId, UUID transportId) {
         String name = "Task " + UUID.randomUUID().toString().substring(0, 8);
         String description = "Description " + UUID.randomUUID().toString().substring(0, 12);
         String price = String.format("%d.%02d",

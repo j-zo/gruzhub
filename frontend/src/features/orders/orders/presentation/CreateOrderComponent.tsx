@@ -150,7 +150,7 @@ export const CreateOrderComponent = ({
           brand: truckBrand,
           model: truckModel,
           type: TransportType.TRUCK,
-          parkNumber: parkNumber
+          parkNumber: "1"
           // TODO parknumber
         });
       }
@@ -159,7 +159,7 @@ export const CreateOrderComponent = ({
           id: undefined as unknown as number,
           model: trailerModel,
           type: TransportType.TRAILER,
-          parkNumber: parkNUmber
+          parkNumber: "1"
           //TODO
         });
       }

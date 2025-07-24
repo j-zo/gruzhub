@@ -27,7 +27,6 @@ import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.orders.orders.dto.CreateOrderRequestDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderResponseDto;
-import ru.gruzhub.orders.orders.dto.OrderTransportDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.enums.OrderStatus;
 import ru.gruzhub.users.UsersService;
@@ -49,7 +48,6 @@ public class OrdersWorkflowControllerTest {
     void testCreateAnonymousOrder() {
         CreateOrderResponseDto createResponse =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, null);
-        assertNotNull(createResponse.getAccessToken());
         assertNotNull(createResponse.getDriverId());
         assertNotNull(createResponse.getOrderId());
     }
@@ -70,7 +68,7 @@ public class OrdersWorkflowControllerTest {
 
     @Test
     void testCreateOrderForExistingTransport() {
-        List<OrderTransportDto> transports =
+        List<TransportDto> transports =
             Collections.singletonList(OrdersWorkflowTestHelper.createOrderTransport(TransportType.TRAILER));
 
         CreateOrderResponseDto firstOrderResponse =
@@ -78,15 +76,10 @@ public class OrdersWorkflowControllerTest {
         CreateOrderResponseDto secondOrderResponse =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, null, transports);
 
-        assertNotNull(firstOrderResponse.getAccessToken());
-        assertNotNull(secondOrderResponse.getAccessToken());
-
         OrderResponseDto firstOrder = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                        firstOrderResponse.getOrderId(),
-                                                                        firstOrderResponse.getAccessToken());
+                                                                        firstOrderResponse.getOrderId());
         OrderResponseDto secondOrder = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                         secondOrderResponse.getOrderId(),
-                                                                         secondOrderResponse.getAccessToken());
+                                                                         secondOrderResponse.getOrderId());
 
         assertEquals(firstOrder.getTransports().getFirst().getId(),
                      secondOrder.getTransports().getFirst().getId());
@@ -98,11 +91,9 @@ public class OrdersWorkflowControllerTest {
 
         CreateOrderResponseDto createResponse =
             OrdersWorkflowTestHelper.createOrder(this.restTemplate, null, orderToCreate, null);
-        assertNotNull(createResponse.getAccessToken());
 
         OrderResponseDto orderResponse = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                           createResponse.getOrderId(),
-                                                                           createResponse.getAccessToken());
+                                                                           createResponse.getOrderId());
 
         assertEquals(orderToCreate.getDescription(), orderResponse.getDescription());
         assertEquals(orderToCreate.isNeedEvacuator(), orderResponse.isNeedEvacuator());
@@ -116,16 +107,16 @@ public class OrdersWorkflowControllerTest {
         assertEquals(orderToCreate.getStreet(), orderResponse.getAddress().getStreet());
         assertEquals(orderToCreate.getUrgency(), orderResponse.getUrgency());
 
-        int EXPECTED_ORDERS_AUTO_COUNT = 2;
+        int EXPECTED_ORDERS_TRANSPORT_COUNT = 2;
         assertEquals(EXPECTED_ORDERS_TRANSPORT_COUNT, orderResponse.getTransports().size());
 
         // Sort and compare autos
         orderResponse.getTransports().sort(Comparator.comparing(TransportDto::getBrand));
-        orderToCreate.getTransport().sort(Comparator.comparing(OrderTransportDto::getBrand));
+        orderToCreate.getTransport().sort(Comparator.comparing(TransportDto::getBrand));
 
-        for (int i = 0; i < EXPECTED_ORDERS_AUTO_COUNT; i++) {
+        for (int i = 0; i < EXPECTED_ORDERS_TRANSPORT_COUNT; i++) {
             TransportDto autoResponse = orderResponse.getTransports().get(i);
-            OrderTransportDto autoRequest = orderToCreate.getTransport().get(i);
+            TransportDto autoRequest = orderToCreate.getTransport().get(i);
 
             assertEquals(autoRequest.getBrand(), autoResponse.getBrand());
             assertEquals(autoRequest.getModel(), autoResponse.getModel());
@@ -242,7 +233,7 @@ public class OrdersWorkflowControllerTest {
                                                  null);
 
         BigDecimal masterInitialBalance =
-            this.usersService.getUserById(masterAuth.getUserId()).getBalance();
+            this.usersService.getUserById(masterAuth.getUserId()).get().getBalance();
 
         // Master starts calculation
         ResponseEntity<String> response =
@@ -259,14 +250,13 @@ public class OrdersWorkflowControllerTest {
 
         // Fetch order and verify status
         OrderResponseDto order = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                   createdOrder.getOrderId(),
-                                                                   customerAuth.getAccessToken());
+                                                                   createdOrder.getOrderId());
         assertNull(order.getMaster());
         assertNull(order.getMasterId());
         assertEquals(OrderStatus.CREATED, order.getStatus());
 
         BigDecimal masterBalanceAfter =
-            this.usersService.getUserById(masterAuth.getUserId()).getBalance();
+            this.usersService.getUserById(masterAuth.getUserId()).get().getBalance();
         assertEquals(masterInitialBalance, masterBalanceAfter);
     }
 
@@ -291,7 +281,7 @@ public class OrdersWorkflowControllerTest {
                                                  null);
 
         BigDecimal masterInitialBalance =
-            this.usersService.getUserById(masterAuth.getUserId()).getBalance();
+            this.usersService.getUserById(masterAuth.getUserId()).get().getBalance();
 
         // Master starts calculation
         OrdersWorkflowTestHelper.startCalculationByMaster(this.restTemplate,
@@ -309,15 +299,14 @@ public class OrdersWorkflowControllerTest {
 
         // Fetch order and verify status
         OrderResponseDto order = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                   createdOrder.getOrderId(),
-                                                                   customerAuth.getAccessToken());
+                                                                   createdOrder.getOrderId());
         assertNull(order.getMaster());
         assertNull(order.getMasterId());
         assertEquals(OrderStatus.CANCEL, order.getStatus());
 
         // Verify master's balance is refunded
         BigDecimal masterBalanceAfter =
-            this.usersService.getUserById(masterAuth.getUserId()).getBalance();
+            this.usersService.getUserById(masterAuth.getUserId()).get().getBalance();
         assertEquals(masterInitialBalance, masterBalanceAfter);
     }
 }

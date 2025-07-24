@@ -5,6 +5,7 @@ import lombok.*;
 import ru.gruzhub.document.model.Document;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "driver")
@@ -16,9 +17,9 @@ import java.util.List;
 public class Driver {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "name",
             nullable = false,
@@ -33,6 +34,6 @@ public class Driver {
             columnDefinition = "TEXT")
     private String email;
 
-    @OneToMany(mappedBy = "owner_driver_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "driverOwner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
 }

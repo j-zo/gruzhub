@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.gruzhub.transport.model.TransportColumn;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "mechanic")
 @Getter
@@ -14,9 +16,9 @@ import ru.gruzhub.transport.model.TransportColumn;
 public class Mechanic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "transport_column_id")

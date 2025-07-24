@@ -28,7 +28,7 @@ interface Props {
   userApiRepository: UserApiRepository;
   orderApiRepository: OrderApiRepository;
   taskApiRepository: TaskApiRepository;
-  autoApiRepository: TransportApiRepository;
+  transportApiRepository: TransportApiRepository;
 }
 
 const ORDERS_FILTERING_REGIONS_KEY = "orders_filtering_regions_key";
@@ -42,7 +42,7 @@ export const OrdersComponent = ({
   userApiRepository,
   orderApiRepository,
   taskApiRepository,
-  autoApiRepository,
+  transportApiRepository,
 }: Props): JSX.Element => {
   const screenWidth = useScreenWidth();
   const [isShowMobileChats, setShowMobileChats] = useState(false);
@@ -614,7 +614,7 @@ export const OrdersComponent = ({
               userApiRepository={userApiRepository}
               orderApiRepository={orderApiRepository}
               taskApiRepository={taskApiRepository}
-              autoApiRepository={autoApiRepository}
+              transportApiRepository={transportApiRepository}
               orderId={openedOrderId}
               user={user}
               isSidebar

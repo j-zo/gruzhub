@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.gruzhub.transport.model.TransportColumn;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class TransportColumnDto {
 
-    private Long id;
+    private UUID id;
     private String columnNumber;
 
     public TransportColumnDto(TransportColumn column) {

@@ -46,12 +46,10 @@ public class OrderMessagesControllerTest {
             null);
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getOrderOwnerToken());
+                                                  orderWithUsers.getOrderId());
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getMasterToken());
+                                                  orderWithUsers.getOrderId());
     }
 
     @ParameterizedTest
@@ -80,20 +78,16 @@ public class OrderMessagesControllerTest {
             regionId);
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  order1WithUsers.getOrderId(),
-                                                  order1WithUsers.getOrderOwnerToken());
+                                                  order1WithUsers.getOrderId());
         SendMessageRequestDto lastMessageOfOrder1 =
             OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                      order1WithUsers.getOrderId(),
-                                                      order1WithUsers.getMasterToken());
+                                                      order1WithUsers.getOrderId());
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  order2WithUsers.getOrderId(),
-                                                  order2WithUsers.getOrderOwnerToken());
+                                                  order2WithUsers.getOrderId());
         SendMessageRequestDto lastMessageOfOrder2 =
             OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                      order2WithUsers.getOrderId(),
-                                                      order2WithUsers.getMasterToken());
+                                                      order2WithUsers.getOrderId());
 
         List<OrderMessageDto> lastMessagesPerEachOrder =
             OrderMessagesControllerHelper.getLastMessagePerEachOrder(this.restTemplate,
@@ -121,32 +115,26 @@ public class OrderMessagesControllerTest {
 
         SendMessageRequestDto lastMasterMessageRequestBody =
             OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                      orderWithUsers.getOrderId(),
-                                                      orderWithUsers.getMasterToken());
+                                                      orderWithUsers.getOrderId());
         SendMessageRequestDto lastOwnerMessageRequestBody =
             OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                      orderWithUsers.getOrderId(),
-                                                      orderWithUsers.getOrderOwnerToken());
+                                                      orderWithUsers.getOrderId());
 
         for (int i = 0; i < 2; i++) {
             lastMasterMessageRequestBody =
                 OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                          orderWithUsers.getOrderId(),
-                                                          orderWithUsers.getMasterToken());
+                                                          orderWithUsers.getOrderId());
             lastOwnerMessageRequestBody =
                 OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                          orderWithUsers.getOrderId(),
-                                                          orderWithUsers.getOrderOwnerToken());
+                                                          orderWithUsers.getOrderId());
         }
 
         List<OrderMessageDto> masterMessages =
             OrderMessagesControllerHelper.getOrderMessages(this.restTemplate,
-                                                           orderWithUsers.getOrderId(),
-                                                           orderWithUsers.getMasterToken());
+                                                           orderWithUsers.getOrderId());
         List<OrderMessageDto> orderOwnerMessages = OrderMessagesControllerHelper.getOrderMessages(
             this.restTemplate,
-            orderWithUsers.getOrderId(),
-            orderWithUsers.getOrderOwnerToken());
+            orderWithUsers.getOrderId());
 
         assertEquals(6, masterMessages.size());
         assertEquals(6, orderOwnerMessages.size());
@@ -169,20 +157,9 @@ public class OrderMessagesControllerTest {
             null);
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getMasterToken());
+                                                  orderWithUsers.getOrderId());
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getOrderOwnerToken());
-
-        for (String accessToken : Arrays.asList(orderWithUsers.getOrderOwnerToken(),
-                                                orderWithUsers.getMasterToken())) {
-            List<UserDto> users =
-                OrderMessagesControllerHelper.getOrderMessagesUsers(this.restTemplate,
-                                                                    orderWithUsers.getOrderId(),
-                                                                    accessToken);
-            assertEquals(2, users.size());
-        }
+                                                  orderWithUsers.getOrderId());
     }
 
     @ParameterizedTest
@@ -198,30 +175,24 @@ public class OrderMessagesControllerTest {
             null);
 
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getMasterToken());
+                                                  orderWithUsers.getOrderId());
         OrderMessagesControllerHelper.sendMessage(this.restTemplate,
-                                                  orderWithUsers.getOrderId(),
-                                                  orderWithUsers.getOrderOwnerToken());
+                                                  orderWithUsers.getOrderId());
 
         OrderMessagesControllerHelper.setMessagesViewedByRole(this.restTemplate,
-                                                              orderWithUsers.getOrderId(),
-                                                              orderWithUsers.getMasterToken());
+                                                              orderWithUsers.getOrderId());
         List<OrderMessageDto> messages =
             OrderMessagesControllerHelper.getOrderMessages(this.restTemplate,
-                                                           orderWithUsers.getOrderId(),
-                                                           orderWithUsers.getMasterToken());
+                                                           orderWithUsers.getOrderId());
 
         for (OrderMessageDto message : messages) {
             assertTrue(message.isViewedByMaster());
         }
 
         OrderMessagesControllerHelper.setMessagesViewedByRole(this.restTemplate,
-                                                              orderWithUsers.getOrderId(),
-                                                              orderWithUsers.getOrderOwnerToken());
+                                                              orderWithUsers.getOrderId());
         messages = OrderMessagesControllerHelper.getOrderMessages(this.restTemplate,
-                                                                  orderWithUsers.getOrderId(),
-                                                                  orderWithUsers.getMasterToken());
+                                                                  orderWithUsers.getOrderId());
 
         for (OrderMessageDto message : messages) {
             assertTrue(message.isViewedByDriver() || message.isViewedByCustomer());

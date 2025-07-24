@@ -19,7 +19,7 @@ const userApiRepository = new UserApiRepository(
 apiHelper.attachUserRepository(userApiRepository);
 const orderApiRepository = new OrderApiRepository(apiHelper, userApiRepository);
 const taskApiRepository = new TaskApiRepository(apiHelper, userApiRepository);
-const autoApiRepository = new TransportApiRepository(apiHelper, userApiRepository);
+const transportApiRepository = new TransportApiRepository(apiHelper, userApiRepository);
 const orderMessageApiRepository = new OrderMessageApiRepository(
   apiHelper,
   userApiRepository
@@ -36,7 +36,7 @@ export default function Home() {
             orderApiRepository={orderApiRepository}
             userApiRepository={userApiRepository}
             taskApiRepository={taskApiRepository}
-            autoApiRepository={autoApiRepository}
+            transportApiRepository={transportApiRepository}
             orderMessageApiRepository={orderMessageApiRepository}
           />
         </main>

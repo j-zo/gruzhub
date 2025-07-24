@@ -156,7 +156,7 @@ public class OrdersDataControllerTest {
 
         OrderResponseDto orderResponse = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
                                                                            createResponse.getOrderId());
-        Long transportId = orderResponse.getTransports().getFirst().getId();
+        UUID transportId = orderResponse.getTransports().getFirst().getId();
 
         HttpHeaders headers = new HttpHeaders();
        // TODO
@@ -205,10 +205,8 @@ public class OrdersDataControllerTest {
                                                  authData.getAccessToken(),
                                                  null,
                                                  null);
-
         OrderResponseDto order = OrdersWorkflowTestHelper.getOrder(this.restTemplate,
-                                                                   createdOrder.getOrderId(),
-                                                                   authData.getAccessToken());
+                                                                   createdOrder.getOrderId());
         TransportDto createdOrderTransport = order.getTransports().getFirst();
 
         UpdateOrderTransportRequestDto transportToUpdate = new UpdateOrderTransportRequestDto();

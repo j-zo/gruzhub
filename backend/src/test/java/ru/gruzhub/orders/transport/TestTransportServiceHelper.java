@@ -1,5 +1,6 @@
 package ru.gruzhub.orders.transport;
 
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.Assertions;
@@ -14,19 +15,21 @@ import ru.gruzhub.users.testing.UserTestingHelper;
 import ru.gruzhub.users.testing.dto.TestAuthDataDto;
 
 @Service
-@RequiredArgsConstructor
 public class TestTransportServiceHelper {
     private final UsersService usersService;
     private final UserTestingHelper userTestingHelper;
     private final Faker faker = new Faker();
 
+    public TestTransportServiceHelper(UsersService usersService, UserTestingHelper userTestingHelper) {
+        this.usersService = usersService;
+        this.userTestingHelper = userTestingHelper;
+    }
+
     public TransportDto createTransportModel(TransportType transportType) {
-        User customer = this.createUserByRole(UserRole.CUSTOMER);
-        User driver = this.createUserByRole(UserRole.DRIVER);
+        User customer = this.getUserByRole(UserRole.CUSTOMER);
 
         TransportDto transport = new TransportDto();
         transport.setCustomerId(customer.getId());
-        transport.setDriverId(driver.getId());
         transport.setBrand(this.faker.company().name());
         transport.setModel(this.faker.company().name());
         transport.setVin(this.faker.regexify("[A-HJ-NPR-Z0-9]{17}"));
@@ -53,9 +56,9 @@ public class TestTransportServiceHelper {
         Assertions.assertEquals(model1.getType(), model2.getType());
     }
 
-    private User createUserByRole(UserRole role) {
-        TestAuthDataDto authData = this.userTestingHelper.signUp(UserRole.CUSTOMER, null);
+    private User getUserByRole(UserRole role) {
+        TestAuthDataDto authData = this.userTestingHelper.signUp(role, null);
         this.userTestingHelper.updateRole(authData.getEmail(), role);
-        return this.usersService.getUserById(authData.getUserId());
+        return this.usersService.getUserById(authData.getUserId()).orElseThrow();
     }
 }

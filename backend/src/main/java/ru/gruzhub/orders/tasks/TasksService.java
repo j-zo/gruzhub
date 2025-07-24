@@ -2,6 +2,8 @@ package ru.gruzhub.orders.tasks;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,7 @@ public class TasksService {
                                               "You are not the master of this order.");
         }
 
-        List<Long> orderTransportIds = order.getTransport().stream().map(Transport::getId).toList();
+        List<UUID> orderTransportIds = order.getTransport().stream().map(Transport::getId).toList();
         if (!orderTransportIds.contains(transport.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                                               "Transport does not belong to the order.");

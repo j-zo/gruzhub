@@ -6,6 +6,7 @@ import {AUTHORIED_USER_ID_KEY, AUTHORIED_USER_TOKEN_KEY,} from "../../constants"
 import UserApiRepository from "../../features/user/data/UserApiRepository";
 import ApiHelper from "../../util/api/ApiHelper";
 import {TransportComponent} from "@/features/common/transport/presentation/TransportComponent";
+import {TransportApiRepository} from "@/features/common/transport/data/TransportApiRepository";
 
 
 const apiHelper = new ApiHelper();
@@ -14,6 +15,10 @@ const userApiRepository = new UserApiRepository(
   AUTHORIED_USER_TOKEN_KEY,
   AUTHORIED_USER_ID_KEY
 );
+const transportApiRepository = new TransportApiRepository(
+    apiHelper,
+    userApiRepository
+)
 apiHelper.attachUserRepository(userApiRepository);
 
 export default function Home() {
@@ -26,6 +31,7 @@ export default function Home() {
                   userApiRepository={userApiRepository}
               />
               <TransportComponent
+                  transportApiRepository={transportApiRepository}
                   userApiRepository={userApiRepository}
               />
           </main>

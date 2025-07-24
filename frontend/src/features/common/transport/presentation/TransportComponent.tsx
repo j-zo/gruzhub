@@ -18,6 +18,7 @@ export const TransportComponent = ({userApiRepository}: Props): JSX.Element => {
     // TODO upload mechanics
 
     const mechanics = new Map();
+    const drivers = new Map();
 
     const transports = new Map();
     transports.set(-1, useState( {
@@ -244,18 +245,6 @@ export const TransportComponent = ({userApiRepository}: Props): JSX.Element => {
                                                         //TODO save driver
                                                     }}
                                                     placeholder="0000"
-                                                />
-                                            </Table.Td>
-                                            <Table.Td h={40}>
-                                                <TextInput
-                                                    value={transport.vin}
-                                                    onChange={(event) => {
-                                                        const newTransport =  {...transport};
-                                                        newTransport.vin = event.currentTarget.value;
-                                                        setTransport(newTransport);
-                                                        //TODO save transport
-                                                    }}
-                                                    placeholder=""
                                                 />
                                             </Table.Td>
                                         </Table.Tr>

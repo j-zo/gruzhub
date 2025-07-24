@@ -3,6 +3,7 @@ package ru.gruzhub.transport.service;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -61,12 +62,24 @@ public class TransportService {
                 .vin(transport.getVin())
                 .build();
 
-        Optional<User> customer = usersService.getUserById(transport.getCustomerId());
-        newTransport.setCustomer(customer.orElseGet(usersService::getCurrentUser));
+        if (transport.getCustomerId() != null) {
+            newTransport.setCustomer(usersService.getUserById(transport.getCustomerId()).orElseGet(usersService::getCurrentUser));
+        } else {
+            newTransport.setCustomer(usersService.getCurrentUser());
+        }
 
-        driverRepository.findById(transport.getDriverId()).ifPresent(newTransport::setDriver);
-        transportColumnRepository.findById(transport.getTransportColumnId()).ifPresent(newTransport::setTransportColumn);
-        transportRepository.findById(transport.getMainTransportId()).ifPresent(newTransport::setMainTransport);
+        if (transport.getDriverId() != null) {
+            driverRepository.findById(transport.getDriverId()).ifPresent(newTransport::setDriver);
+        }
+
+        if (transport.getTransportColumnId() != null) {
+            transportColumnRepository.findById(transport.getTransportColumnId()).ifPresent(newTransport::setTransportColumn);
+        }
+
+        if (transport.getMainTransportId() != null) {
+            transportRepository.findById(transport.getMainTransportId()).ifPresent(newTransport::setMainTransport);
+        }
+
         if (transport.getDocumentIds() != null) {
             newTransport.setDocuments(transport.getDocumentIds()
                     .stream()
@@ -131,7 +144,7 @@ public class TransportService {
                     .toList());
         }
 
-        HashSet<Long> idsToRemove = new HashSet<>();
+        HashSet<UUID> idsToRemove = new HashSet<>();
         idsToRemove.addAll(updatedValues.getDocumentIds());
         idsToRemove.addAll(existingTransport.getDocuments().stream().map(Document::getId).toList());
 
@@ -140,13 +153,13 @@ public class TransportService {
         return transportRepository.save(existingTransport);
     }
 
-    public Transport getTransportById(Long transportId) {
+    public Transport getTransportById(UUID transportId) {
         return this.transportRepository.findById(transportId)
                                   .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                                                                                  "Transport not found"));
     }
 
-    public TransportDto getTransportByIdWithAuth(String authorization, Long transportId) {
+    public TransportDto getTransportByIdWithAuth(String authorization, UUID transportId) {
         User user = this.usersService.getUserFromToken(authorization);
         Transport transport = this.getTransportById(transportId);
 
@@ -159,7 +172,7 @@ public class TransportService {
         return new TransportDto(transport);
     }
 
-    private Transport getOriginalTransportByVinOrNumber(Long excludeId, String vin, String number) {
+    private Transport getOriginalTransportByVinOrNumber(UUID excludeId, String vin, String number) {
         if (vin != null) {
             Optional<Transport> transportByVin = this.transportRepository.findByVinAndIdNot(vin, excludeId);
             if (transportByVin.isPresent()) {

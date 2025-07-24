@@ -2,6 +2,8 @@ package ru.gruzhub.orders.orders.service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -77,7 +79,7 @@ public class OrdersDataService {
         return order;
     }
 
-    public List<OrderResponseDto> getTransportOrders(User user, Long transportId) {
+    public List<OrderResponseDto> getTransportOrders(User user, UUID transportId) {
         if (user.getRole() == UserRole.ADMIN) {
             return this.orderRepository.findOrdersByTransport(transportId)
                                        .stream()
@@ -136,7 +138,7 @@ public class OrdersDataService {
         };
     }
 
-    public TransportDto getOrderTransport(User user, Long orderId, Long transportId) {
+    public TransportDto getOrderTransport(User user, Long orderId, UUID transportId) {
         Transport transport = this.transportService.getTransportById(transportId);
         this.validateOrderTransportPermissions(user, orderId, transport);
         return new TransportDto(transport);
@@ -183,10 +185,7 @@ public class OrdersDataService {
         boolean isMasterAccessToCreatedOrder =
             authorizedUser.getRole() == UserRole.MASTER && order.getStatus() == OrderStatus.CREATED;
 
-        boolean isAccessToExistingOrder = (order.getDriver() != null &&
-                                           authorizedUser.getId()
-                                                         .equals(order.getDriver().getId())) ||
-                                          (order.getMaster() != null &&
+        boolean isAccessToExistingOrder = (order.getMaster() != null &&
                                            authorizedUser.getId()
                                                          .equals(order.getMaster().getId())) ||
                                           (order.getCustomer() != null &&
@@ -214,10 +213,9 @@ public class OrdersDataService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        List<Long> transportIds = order.getTransport().stream().map(Transport::getId).toList();
+        List<UUID> transportIds = order.getTransport().stream().map(Transport::getId).toList();
         if (!transportIds.contains(transport.getId()) &&
-            !Objects.equals(transport.getCustomer().getId(), user.getId()) &&
-            !Objects.equals(transport.getDriver().getId(), user.getId())) {
+            !Objects.equals(transport.getCustomer().getId(), user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
     }

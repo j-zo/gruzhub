@@ -1,6 +1,8 @@
 package ru.gruzhub.orders.orders.controller;
 
 import java.util.List;
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +30,11 @@ public class OrdersDataController {
         return orders.stream().map(OrderResponseDto::new).toList();
     }
 
+    //TODO FIX ID
     @GetMapping("/transport")
     public TransportDto getOrderTransport(
         @RequestParam Long orderId,
-        @RequestParam Long transportId) {
+        @RequestParam UUID transportId) {
         return this.dataService.getOrderTransport(this.usersService.getCurrentUser(), orderId, transportId);
     }
 
@@ -41,8 +44,9 @@ public class OrdersDataController {
         return ResponseEntity.ok().build();
     }
 
+    //TODO FIX ID
     @GetMapping("/transport/{transportId}")
-    public List<OrderResponseDto> getTransportOrders(@PathVariable Long transportId) {
+    public List<OrderResponseDto> getTransportOrders(@PathVariable UUID transportId) {
         return this.dataService.getTransportOrders(this.usersService.getCurrentUser(), transportId);
     }
 

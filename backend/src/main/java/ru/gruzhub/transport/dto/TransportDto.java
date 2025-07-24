@@ -8,23 +8,24 @@ import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.transport.model.Transport;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class TransportDto {
-    private Long id;
+    private UUID id;
     private TransportType type;
     // TODO: what is this customer field???
     private Long customerId;
     // TODO: add main transport dto?
-    private Long mainTransportId;
+    private UUID mainTransportId;
     // TODO: Add transport column dto?
-    private Long transportColumnId;
-    private List<Long> documentIds;
+    private UUID transportColumnId;
+    private List<UUID> documentIds;
     // TODO: Add driver dto???
-    private Long driverId;
+    private UUID driverId;
     private String brand;
     private String model;
     private String vin;

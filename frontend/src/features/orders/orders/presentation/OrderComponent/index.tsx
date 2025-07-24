@@ -47,7 +47,6 @@ export const OrderComponent = ({
   orderApiRepository,
   userApiRepository,
   taskApiRepository, transportApiRepository,
-
   orderId,
 
   user,

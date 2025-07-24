@@ -20,7 +20,6 @@ import ru.gruzhub.orders.orders.dto.AuthWithOrderDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderRequestDto;
 import ru.gruzhub.orders.orders.dto.CreateOrderResponseDto;
 import ru.gruzhub.orders.orders.dto.DeclineOrderRequestDto;
-import ru.gruzhub.orders.orders.dto.OrderTransportDto;
 import ru.gruzhub.orders.orders.dto.OrderResponseDto;
 import ru.gruzhub.orders.orders.dto.OrderStatusChangeDto;
 import ru.gruzhub.orders.orders.dto.OrderWithUsersDto;
@@ -45,33 +44,30 @@ public class OrdersWorkflowTestHelper {
 
         if (masterToken == null) {
             TestAuthDataDto master = userTestingHelper.signUp(UserRole.MASTER, regionId);
-            masterToken = master.getAccessToken();
+            masterToken = "Bearer " + master.getAccessToken();
         }
 
         if (orderOwnerRole == UserRole.CUSTOMER) {
             TestAuthDataDto customer = userTestingHelper.signUp(UserRole.CUSTOMER, regionId);
 
             CreateOrderResponseDto order =
-                createOrder(restTemplate, regionId, customer.getAccessToken(), null, null);
+                createOrder(restTemplate, regionId, "Bearer " + customer.getAccessToken(), null, null);
 
             ResponseEntity<String> response =
                 startCalculationByMaster(restTemplate, masterToken, order.getOrderId());
             assertEquals(HttpStatus.OK, response.getStatusCode());
 
-            return new OrderWithUsersDto(order.getOrderId(),
-                                         customer.getAccessToken(),
-                                         masterToken);
+            return new OrderWithUsersDto(order.getOrderId());
         }
 
         if (orderOwnerRole == UserRole.DRIVER) {
             CreateOrderResponseDto order = createOrder(restTemplate, regionId, null, null, null);
-            assert order.getAccessToken() != null;
 
             ResponseEntity<String> response =
                 startCalculationByMaster(restTemplate, masterToken, order.getOrderId());
             assertEquals(HttpStatus.OK, response.getStatusCode());
 
-            return new OrderWithUsersDto(order.getOrderId(), order.getAccessToken(), masterToken);
+            return new OrderWithUsersDto(order.getOrderId());
         }
 
         throw new RuntimeException("Unsupported user role");
@@ -80,7 +76,7 @@ public class OrdersWorkflowTestHelper {
     public static CreateOrderResponseDto createOrder(TestRestTemplate restTemplate,
                                                      String accessToken,
                                                      CreateOrderRequestDto orderRequest,
-                                                     List<OrderTransportDto> transportDtos) {
+                                                     List<TransportDto> transportDtos) {
         return createOrder(restTemplate, null, accessToken, orderRequest, transportDtos);
     }
 
@@ -88,7 +84,7 @@ public class OrdersWorkflowTestHelper {
                                                      Long regionId,
                                                      String accessToken,
                                                      CreateOrderRequestDto orderRequest,
-                                                     List<OrderTransportDto> transportDtos) {
+                                                     List<TransportDto> transportDtos) {
         if (orderRequest == null) {
             orderRequest = createOrderRequest(transportDtos, regionId);
         }
@@ -111,11 +107,11 @@ public class OrdersWorkflowTestHelper {
         return createOrderRequest(null);
     }
 
-    public static CreateOrderRequestDto createOrderRequest(List<OrderTransportDto> transportDtos) {
+    public static CreateOrderRequestDto createOrderRequest(List<TransportDto> transportDtos) {
         return createOrderRequest(transportDtos, null);
     }
 
-    public static CreateOrderRequestDto createOrderRequest(List<OrderTransportDto> transportDtos,
+    public static CreateOrderRequestDto createOrderRequest(List<TransportDto> transportDtos,
                                                            Long regionId) {
         if (transportDtos == null) {
             transportDtos =
@@ -252,7 +248,7 @@ public class OrdersWorkflowTestHelper {
                                  createdOrder.getOrderId());
 
         OrderResponseDto order =
-            getOrder(restTemplate, createdOrder.getOrderId(), masterAuthData.getAccessToken());
+            getOrder(restTemplate, createdOrder.getOrderId());
 
         return new AuthWithOrderDto(masterAuthData, order);
     }

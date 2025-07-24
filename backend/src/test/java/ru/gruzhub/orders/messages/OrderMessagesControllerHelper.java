@@ -21,15 +21,14 @@ import ru.gruzhub.users.dto.UserDto;
 
 public class OrderMessagesControllerHelper {
     public static SendMessageRequestDto sendMessage(TestRestTemplate restTemplate,
-                                                    Long orderId,
-                                                    String accessToken) {
+                                                    Long orderId) {
         SendMessageRequestDto body = new SendMessageRequestDto();
         body.setGuaranteeId(UUID.randomUUID() + "-" + System.currentTimeMillis());
         body.setOrderId(orderId);
         body.setText("Sample message text");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "");
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<SendMessageRequestDto> request = new HttpEntity<>(body, headers);
@@ -43,11 +42,10 @@ public class OrderMessagesControllerHelper {
     }
 
     public static List<OrderMessageDto> getOrderMessages(TestRestTemplate restTemplate,
-                                                         Long orderId,
-                                                         String accessToken) {
+                                                         Long orderId) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "");
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
         ResponseEntity<OrderMessageDto[]> response = restTemplate.exchange(
@@ -102,11 +100,12 @@ public class OrderMessagesControllerHelper {
         return Arrays.asList(Objects.requireNonNull(response.getBody()));
     }
 
+
     public static void setMessagesViewedByRole(TestRestTemplate restTemplate,
-                                               Long orderId,
-                                               String accessToken) {
+                                               Long orderId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+
+        headers.set("Authorization", "");
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 

@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/transport")
@@ -33,10 +34,11 @@ public class TransportController {
     private static final Logger logger = LoggerFactory.getLogger(TransportController.class);
     private final TransportService transportService;
 
+    // TODO: FIX!!!
     @GetMapping("/{transportId}")
-    public TransportDto getTransportById(@PathVariable Long transportId,
+    public TransportDto getTransportById(@PathVariable String transportId,
                                          @RequestHeader("Authorization") String authorization) {
-        return this.transportService.getTransportByIdWithAuth(authorization, transportId);
+        return this.transportService.getTransportByIdWithAuth(authorization, UUID.fromString(transportId));
     }
 
     @PostMapping

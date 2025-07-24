@@ -27,6 +27,7 @@ public class TransportServiceTest {
     @Autowired
     private UserTestingHelper userTestingHelper;
 
+    @Autowired
     private TestTransportServiceHelper testHelper;
 
     @BeforeEach

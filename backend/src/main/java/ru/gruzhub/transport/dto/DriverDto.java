@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.gruzhub.driver.model.Driver;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class DriverDto {
 
-    private Long id;
+    private UUID id;
     private String name;
     private String phone;
     private String email;

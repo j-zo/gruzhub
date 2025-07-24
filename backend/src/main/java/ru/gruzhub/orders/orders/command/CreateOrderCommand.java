@@ -1,6 +1,7 @@
 package ru.gruzhub.orders.orders.command;
 
 import io.sentry.Sentry;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,6 @@ import ru.gruzhub.users.models.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +51,7 @@ public class CreateOrderCommand {
     @Value("${app.url}")
     private String appUrl;
 
+    @Transactional
     public CreateOrderResponseDto createOrder(CreateOrderRequestDto createOrderRequest) {
         User authorizedUser = this.usersService.getCurrentUser();
 
@@ -129,7 +130,7 @@ public class CreateOrderCommand {
                    .name(createOrderRequest.getDriverName())
                    .build();
 
-            return this.driverRepository.create(newDriver);
+            return this.driverRepository.save(newDriver);
         }
 
         throw new RuntimeException("Driver should be present in the order!");

@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
+
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +22,7 @@ public class OrdersDataTestHelper {
     public static TransportDto getOrderTransport(TestRestTemplate restTemplate,
                                                  String accessToken,
                                                  Long orderId,
-                                                 Long transportId) {
+                                                 UUID transportId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", accessToken);

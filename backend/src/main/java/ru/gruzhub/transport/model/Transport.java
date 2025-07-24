@@ -12,6 +12,7 @@ import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.users.models.User;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "transport")
@@ -22,9 +23,9 @@ import java.util.List;
 @AllArgsConstructor
 public class Transport {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -41,9 +42,6 @@ public class Transport {
     @ManyToOne
     @JoinColumn(name = "transport_column_id")
     private TransportColumn transportColumn;
-
-    @OneToMany(mappedBy = "owner_transport_id", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Document> documents;
 
     @Column(name = "brand",
             columnDefinition = "TEXT")
@@ -79,4 +77,7 @@ public class Transport {
             nullable = false,
             columnDefinition = "TEXT")
     private TransportType type;
+
+    @OneToMany(mappedBy = "transportOwner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents;
 }

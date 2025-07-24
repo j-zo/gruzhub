@@ -3,6 +3,8 @@ package ru.gruzhub.transport.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "transport_column")
 @Getter
@@ -13,9 +15,9 @@ import lombok.*;
 public class TransportColumn {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "UUID", updatable = false, nullable = false)
+    private UUID id;
 
     @Column(name = "column_number",
             columnDefinition = "TEXT")
