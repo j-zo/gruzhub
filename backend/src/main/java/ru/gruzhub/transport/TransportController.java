@@ -1,4 +1,4 @@
-package ru.gruzhub.transport.controller;
+package ru.gruzhub.transport;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.gruzhub.transport.dto.TransportDto;
-import ru.gruzhub.transport.service.TransportService;
 import ru.gruzhub.transport.dto.TransportUploadResponseDto;
 import ru.gruzhub.transport.dto.UpdateTransportRequestDto;
 

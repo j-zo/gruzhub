@@ -1,4 +1,4 @@
-package ru.gruzhub.transport.repository;
+package ru.gruzhub.transport;
 
 import java.util.Optional;
 import java.util.UUID;

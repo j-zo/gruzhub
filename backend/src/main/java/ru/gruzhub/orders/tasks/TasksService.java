@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.gruzhub.transport.service.TransportService;
+import ru.gruzhub.transport.TransportService;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.orders.orders.model.Order;
 import ru.gruzhub.orders.orders.service.OrdersDataService;

@@ -1,4 +1,4 @@
-package ru.gruzhub.driver.repository;
+package ru.gruzhub.driver;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

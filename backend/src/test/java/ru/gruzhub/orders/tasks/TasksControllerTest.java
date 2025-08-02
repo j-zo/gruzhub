@@ -14,7 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import ru.gruzhub.transport.repository.TransportRepository;
+import ru.gruzhub.transport.TransportRepository;
 import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.orders.orders.OrdersWorkflowTestHelper;
 import ru.gruzhub.orders.orders.dto.AuthWithOrderDto;

@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.gruzhub.transport.dto.TransportDto;
-import ru.gruzhub.transport.service.TransportService;
+import ru.gruzhub.transport.TransportService;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.orders.orders.model.Order;
 import ru.gruzhub.orders.orders.repository.OrderRepository;

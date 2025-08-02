@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import ru.gruzhub.transport.dto.TransportDto;
-import ru.gruzhub.transport.service.TransportService;
+import ru.gruzhub.transport.TransportService;
 import ru.gruzhub.transport.enums.TransportType;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.users.UsersService;

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import ru.gruzhub.transport.service.TransportService;
+import ru.gruzhub.transport.TransportService;
 import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.orders.orders.command.UpdateTransportCommand;

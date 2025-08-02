@@ -1,4 +1,4 @@
-package ru.gruzhub.transport.service;
+package ru.gruzhub.transport;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -13,12 +13,10 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.gruzhub.document.model.Document;
 import ru.gruzhub.document.repository.DocumentRepository;
 import ru.gruzhub.driver.model.Driver;
-import ru.gruzhub.driver.repository.DriverRepository;
+import ru.gruzhub.driver.DriverRepository;
 import ru.gruzhub.transport.dto.TransportDto;
 import ru.gruzhub.transport.model.Transport;
 import ru.gruzhub.transport.model.TransportColumn;
-import ru.gruzhub.transport.repository.TransportColumnRepository;
-import ru.gruzhub.transport.repository.TransportRepository;
 import ru.gruzhub.users.UsersService;
 import ru.gruzhub.users.enums.UserRole;
 import ru.gruzhub.users.models.User;
